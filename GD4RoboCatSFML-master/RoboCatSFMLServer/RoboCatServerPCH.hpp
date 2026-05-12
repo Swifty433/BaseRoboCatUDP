@@ -10,4 +10,5 @@
 #include "RoboCatServer.hpp"
 #include "MouseServer.hpp"
 #include "YarnServer.hpp"
+#include "PotatoPlayerServer.hpp"
 
