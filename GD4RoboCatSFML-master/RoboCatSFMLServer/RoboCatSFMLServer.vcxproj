@@ -158,6 +158,7 @@
     <ClInclude Include="ClientProxy.hpp" />
     <ClInclude Include="MouseServer.hpp" />
     <ClInclude Include="NetworkManagerServer.hpp" />
+    <ClInclude Include="PotatoPlayerServer.hpp" />
     <ClInclude Include="ReplicationManagerServer.hpp" />
     <ClInclude Include="ReplicationManagerTransmissionData.hpp" />
     <ClInclude Include="RoboCatServer.hpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="ClientProxy.cpp" />
     <ClCompile Include="MouseServer.cpp" />
     <ClCompile Include="NetworkManagerServer.cpp" />
+    <ClCompile Include="PotatoPlayerServer.cpp" />
     <ClCompile Include="ReplicationManagerServer.cpp" />
     <ClCompile Include="ReplicationManagerTransmissionData.cpp" />
     <ClCompile Include="RoboCatServer.cpp" />
