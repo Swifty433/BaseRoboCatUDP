@@ -48,6 +48,7 @@ using std::unordered_set;
 
 class RoboCat;
 class GameObject;
+class PotatoPlayer;
 
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
@@ -80,6 +81,7 @@ class GameObject;
 #include "GameObject.hpp"
 #include "GameObjectRegistry.hpp"
 #include "RoboCat.hpp"
+#include "PotatoPlayer.hpp"
 #include "World.hpp"
 #include "Timing.hpp"
 #include "Mouse.hpp"

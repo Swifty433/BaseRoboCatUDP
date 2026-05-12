@@ -166,6 +166,7 @@
     <ClInclude Include="Move.hpp" />
     <ClInclude Include="MoveList.hpp" />
     <ClInclude Include="NetworkManager.hpp" />
+    <ClInclude Include="PotatoPlayer.hpp" />
     <ClInclude Include="ReplicationCommand.hpp" />
     <ClInclude Include="RoboCat.hpp" />
     <ClInclude Include="RoboCatPCH.hpp" />
@@ -197,6 +198,7 @@
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="MoveList.cpp" />
     <ClCompile Include="NetworkManager.cpp" />
+    <ClCompile Include="PotatoPlayer.cpp" />
     <ClCompile Include="RoboCat.cpp" />
     <ClCompile Include="RoboCatPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

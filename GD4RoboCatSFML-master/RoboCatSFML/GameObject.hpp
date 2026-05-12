@@ -12,6 +12,7 @@ public:
 	virtual ~GameObject() {}
 
 	virtual RoboCat* GetAsCat() { return nullptr; }
+	virtual PotatoPlayer* GetAsPotatoPlayer() { return nullptr; }
 
 	virtual uint32_t GetAllStateMask() const { return 0; }
 
