@@ -20,6 +20,11 @@ public:
 
 	ClientProxyPtr	GetClientProxy(int inPlayerId) const;
 
+	const unordered_map<SocketAddress, ClientProxyPtr>& GetAddressToClientMap() const
+	{
+		return mAddressToClientMap;
+	}
+
 private:
 	NetworkManagerServer();
 
