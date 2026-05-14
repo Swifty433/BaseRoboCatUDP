@@ -1,3 +1,4 @@
+//edited by joseph byrne D00255161
 #include "RoboCatClientPCH.hpp"
 
 std::unique_ptr< RenderManager >	RenderManager::sInstance;
@@ -56,8 +57,9 @@ void RenderManager::RenderComponents()
 {
 	//Get the logical viewport so we can pass this to the SpriteComponents when it's draw time
 	for (SpriteComponent* c : mComponents)
-	{	
-		WindowManager::sInstance->draw(c->GetSprite());	
+	{
+		if (c->IsVisible())
+			WindowManager::sInstance->draw(c->GetSprite());
 	}
 }
 

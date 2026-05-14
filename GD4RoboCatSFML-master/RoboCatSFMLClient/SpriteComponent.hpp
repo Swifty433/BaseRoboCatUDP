@@ -13,6 +13,9 @@ public:
 	virtual sf::Sprite& GetSprite();
 	
 
+    void SetVisibility(bool inVisible) { mIsVisible = inVisible; }
+    bool IsVisible() const { return mIsVisible; }
+
 
 protected:
 
@@ -20,6 +23,7 @@ protected:
 
 	//don't want circular reference...
 	GameObject* mGameObject;
+    bool        mIsVisible;
 };
 
 typedef shared_ptr< SpriteComponent >	SpriteComponentPtr;

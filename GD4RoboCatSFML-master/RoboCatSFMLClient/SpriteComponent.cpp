@@ -2,7 +2,8 @@
 
 
 SpriteComponent::SpriteComponent(GameObject* inGameObject) :
-	mGameObject(inGameObject)
+	mGameObject(inGameObject),
+	mIsVisible(true)
 {
 	//and add yourself to the rendermanager...
 	RenderManager::sInstance->AddComponent(this);
