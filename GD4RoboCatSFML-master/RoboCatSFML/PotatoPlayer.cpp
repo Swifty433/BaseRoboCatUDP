@@ -13,13 +13,14 @@ PotatoPlayer::PotatoPlayer() :
     mHealth(1),
     mHasPotato(false),
     mPlayerId(0),
-    mMaxLinearSpeed(400.f),
+    mMaxLinearSpeed(3000.f),
     mMaxRotationSpeed(180.f),
     mWallRestitution(0.1f),
     mPlayerRestitution(0.1f),
     mLastMoveTimestamp(0.f)
 {
     SetCollisionRadius(40.f);
+    SetScale(0.5f);
 }
 
 void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputState)

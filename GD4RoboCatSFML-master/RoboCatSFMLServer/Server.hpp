@@ -1,4 +1,5 @@
 // Joseph Byrne D00255161
+// Eoin Hamill D00258444
 
 #pragma once
 
@@ -14,7 +15,8 @@ public:
     void HandleLostClient(ClientProxyPtr inClientProxy);
 
     PotatoPlayerPtr GetPlayerForId(int inPlayerId);
-    void            SpawnPlayerForId(int inPlayerId);
+    PotatoPlayerPtr SpawnPlayerForId(int inPlayerId);
+    void            SetPotatoHolder(int inPlayerId) { mPotatoHolderId = inPlayerId; }
 
 private:
     Server();
@@ -22,8 +24,6 @@ private:
     void SetupWorld();
 
     void UpdatePotatoTimer();
-    void PassPotatoToNearestAlivePlayer(int inFromPlayerId);
-    void EndRound();
     void StartNewRound();
     void SaveScores();
     void LoadScores();
@@ -31,12 +31,9 @@ private:
     int   mPotatoHolderId;
     float mPotatoTimer;
     float mPotatoTimerMax;
-    int   mPlayersAliveThisRound;
-    int   mRoundNumber;
     int   mTotalPlayers;
 
     unordered_map<int, int> mCumulativeScores;
-    vector<int>             mDeathOrder;
 
     bool  mRoundActive;
     float mRoundEndTimer;

@@ -14,13 +14,10 @@ Server::Server() :
     mPotatoHolderId(-1),
     mPotatoTimer(15.f),
     mPotatoTimerMax(15.f),
-    mPlayersAliveThisRound(0),
-    mRoundNumber(1),
     mTotalPlayers(0),
     mRoundActive(false),
     mRoundEndTimer(0.f)
 {
-    // Register PotatoPlayer — replaces RoboCat/Mouse/Yarn
     GameObjectRegistry::sInstance->RegisterCreationFunction(
         'PTOP', PotatoPlayerServer::StaticCreate);
 
@@ -74,7 +71,8 @@ void Server::DoFrame()
 
 void Server::UpdatePotatoTimer()
 {
-    if (mPotatoHolderId < 0) return;
+    // Guard: don't fire if round already ended or no holder assigned
+    if (mPotatoHolderId < 0 || !mRoundActive) return;
 
     mPotatoTimer -= Timing::sInstance.GetDeltaTime();
 
@@ -83,101 +81,46 @@ void Server::UpdatePotatoTimer()
         PotatoPlayerPtr holder = GetPlayerForId(mPotatoHolderId);
         if (holder)
         {
-            mDeathOrder.push_back(mPotatoHolderId);
-            static_cast<PotatoPlayerServer*>(holder.get())->ExplodePotato();
-            mPlayersAliveThisRound--;
-            LOG("Player %d exploded! %d players remain",
-                mPotatoHolderId, mPlayersAliveThisRound);
-        }
+            LOG("Player %d exploded! Everyone else gets a point.", mPotatoHolderId);
 
-        if (mPlayersAliveThisRound <= 1)
-        {
-            for (const auto& go : World::sInstance->GetGameObjects())
+            // Give all OTHER connected players 1 point
+            const auto& clients =
+                NetworkManagerServer::sInstance->GetAddressToClientMap();
+            for (const auto& pair : clients)
             {
-                PotatoPlayer* pp = go->GetAsPotatoPlayer();
-                if (pp && pp->IsAlive())
+                int pid = pair.second->GetPlayerId();
+                if (pid != mPotatoHolderId)
                 {
-                    mDeathOrder.push_back(pp->GetPlayerId());
-                    break;
+                    mCumulativeScores[pid]++;
+                    ScoreBoardManager::sInstance->IncScore(pid, 1);
+                    LOG("Player %d gets 1 point", pid);
                 }
             }
-            EndRound();
+
+            SaveScores();
+
+            // Kill the holder
+            static_cast<PotatoPlayerServer*>(holder.get())->ExplodePotato();
         }
-        else
-        {
-            PassPotatoToNearestAlivePlayer(mPotatoHolderId);
-            mPotatoTimerMax = std::max(5.f, mPotatoTimerMax - 1.f);
-            mPotatoTimer = mPotatoTimerMax;
-        }
+
+        // Everyone respawns after 3 seconds
+        mRoundActive = false;
+        mRoundEndTimer = 3.f;
+        mPotatoTimer = mPotatoTimerMax;
     }
-}
-
-void Server::PassPotatoToNearestAlivePlayer(int inFromPlayerId)
-{
-    PotatoPlayerPtr fromPlayer = GetPlayerForId(inFromPlayerId);
-    if (!fromPlayer) return;
-
-    Vector3 fromLoc = fromPlayer->GetLocation();
-    float   closestDist = FLT_MAX;
-    PotatoPlayerServerPtr closestPlayer = nullptr;
-
-    for (const auto& go : World::sInstance->GetGameObjects())
-    {
-        PotatoPlayer* pp = go->GetAsPotatoPlayer();
-        if (pp && pp->IsAlive() && (int)pp->GetPlayerId() != inFromPlayerId)
-        {
-            float dist = (pp->GetLocation() - fromLoc).LengthSq2D();
-            if (dist < closestDist)
-            {
-                closestDist = dist;
-                closestPlayer = std::static_pointer_cast<PotatoPlayerServer>(go);
-            }
-        }
-    }
-
-    if (closestPlayer)
-    {
-        fromPlayer->SetHasPotato(false);
-        NetworkManagerServer::sInstance->SetStateDirty(
-            fromPlayer->GetNetworkId(), PotatoPlayer::EPRS_Potato);
-
-        closestPlayer->ReceivePotato();
-        mPotatoHolderId = closestPlayer->GetPlayerId();
-        LOG("Potato passed to player %d", mPotatoHolderId);
-    }
-}
-
-void Server::EndRound()
-{
-    mRoundActive = false;
-
-    int numPlayers = (int)mDeathOrder.size();
-    for (int i = 0; i < numPlayers; ++i)
-    {
-        int playerId = mDeathOrder[i];
-        int points = i + 1;
-        mCumulativeScores[playerId] += points;
-        ScoreBoardManager::sInstance->IncScore(playerId, points);
-        LOG("Player %d earned %d points", playerId, points);
-    }
-
-    SaveScores();
-    LOG("Round %d over! Next round in 5 seconds...", mRoundNumber);
-    mRoundNumber++;
-    mRoundEndTimer = 5.f;
 }
 
 void Server::StartNewRound()
 {
-    mDeathOrder.clear();
     mPotatoTimer = mPotatoTimerMax;
     mPotatoHolderId = -1;
 
     const auto& clients =
         NetworkManagerServer::sInstance->GetAddressToClientMap();
 
-    mPlayersAliveThisRound = 0;
+    if (clients.empty()) return;
 
+    // Respawn ALL players in a circle — including whoever just exploded
     float angleStep = (2.f * 3.14159f) / std::max(1, (int)clients.size());
     float angle = 0.f;
     float spawnRadius = 300.f;
@@ -187,12 +130,16 @@ void Server::StartNewRound()
     {
         int playerId = pair.second->GetPlayerId();
 
+        // Get old player BEFORE spawning the new one
         PotatoPlayerPtr old = GetPlayerForId(playerId);
+
+        // Spawn fresh first — SpawnPlayerForId now returns the new player
+        PotatoPlayerPtr newPlayer = SpawnPlayerForId(playerId);
+
+        // Kill old AFTER spawning so GetPlayerForId (which skips dying objects)
+        // will return the new one from here on
         if (old) old->SetDoesWantToDie(true);
 
-        SpawnPlayerForId(playerId);
-
-        PotatoPlayerPtr newPlayer = GetPlayerForId(playerId);
         if (newPlayer)
         {
             Vector3 spawnPos = center + Vector3(
@@ -201,27 +148,25 @@ void Server::StartNewRound()
                 0.f);
             newPlayer->SetLocation(spawnPos);
             angle += angleStep;
-            mPlayersAliveThisRound++;
         }
     }
 
-    if (!clients.empty())
-    {
-        auto it = clients.begin();
-        std::advance(it, rand() % clients.size());
-        int firstHolder = it->second->GetPlayerId();
+    // Give potato to a random player
+    auto it = clients.begin();
+    std::advance(it, rand() % clients.size());
+    int firstHolder = it->second->GetPlayerId();
 
-        PotatoPlayerPtr holder = GetPlayerForId(firstHolder);
-        if (holder)
-        {
-            static_cast<PotatoPlayerServer*>(holder.get())->ReceivePotato();
-            mPotatoHolderId = firstHolder;
-        }
+    // GetPlayerForId now skips dying objects so this safely finds the new object
+    PotatoPlayerPtr holder = GetPlayerForId(firstHolder);
+    if (holder)
+    {
+        static_cast<PotatoPlayerServer*>(holder.get())->ReceivePotato();
+        mPotatoHolderId = firstHolder;
     }
 
     mRoundActive = true;
-    LOG("Round %d started! Potato with player %d, timer %.1fs",
-        mRoundNumber, mPotatoHolderId, mPotatoTimer);
+    LOG("New round! Potato with player %d, timer %.1fs",
+        mPotatoHolderId, mPotatoTimer);
 }
 
 void Server::HandleNewClient(ClientProxyPtr inClientProxy)
@@ -231,12 +176,11 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
     mCumulativeScores[playerId] = 0;
     mTotalPlayers++;
 
-    SpawnPlayerForId(playerId);
-    mPlayersAliveThisRound++;
+    PotatoPlayerPtr player = SpawnPlayerForId(playerId);
 
+    // First player gets the potato and starts the round
     if (mTotalPlayers == 1)
     {
-        PotatoPlayerPtr player = GetPlayerForId(playerId);
         if (player)
         {
             static_cast<PotatoPlayerServer*>(player.get())->ReceivePotato();
@@ -247,7 +191,7 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
     }
 }
 
-void Server::SpawnPlayerForId(int inPlayerId)
+PotatoPlayerPtr Server::SpawnPlayerForId(int inPlayerId)
 {
     PotatoPlayerPtr player = std::static_pointer_cast<PotatoPlayer>(
         GameObjectRegistry::sInstance->CreateGameObject('PTOP'));
@@ -259,6 +203,7 @@ void Server::SpawnPlayerForId(int inPlayerId)
         640.f - static_cast<float>(inPlayerId) * 60.f, 360.f, 0.f));
 
     LOG("Spawned PotatoPlayer for player %d", inPlayerId);
+    return player;
 }
 
 void Server::HandleLostClient(ClientProxyPtr inClientProxy)
@@ -270,13 +215,48 @@ void Server::HandleLostClient(ClientProxyPtr inClientProxy)
     PotatoPlayerPtr player = GetPlayerForId(playerId);
     if (player)
     {
+        // If they had the potato, give it to someone else
         if ((int)player->GetPlayerId() == mPotatoHolderId)
-            PassPotatoToNearestAlivePlayer(playerId);
+        {
+            player->SetHasPotato(false);
+            NetworkManagerServer::sInstance->SetStateDirty(
+                player->GetNetworkId(), PotatoPlayer::EPRS_Potato);
+
+            bool foundNewHolder = false;
+
+            // Find any other living player to give it to
+            for (const auto& go : World::sInstance->GetGameObjects())
+            {
+                PotatoPlayer* pp = go->GetAsPotatoPlayer();
+                if (pp && (int)pp->GetPlayerId() != playerId && !pp->DoesWantToDie())
+                {
+                    PotatoPlayerServer* sp =
+                        static_cast<PotatoPlayerServer*>(pp);
+                    sp->ReceivePotato();
+                    mPotatoHolderId = pp->GetPlayerId();
+                    foundNewHolder = true;
+                    break;
+                }
+            }
+
+            // Nobody to give it to — force a new round after a short delay
+            if (!foundNewHolder)
+            {
+                mRoundActive = false;
+                mRoundEndTimer = 3.f;
+                mPotatoHolderId = -1;
+            }
+        }
         player->SetDoesWantToDie(true);
-        mPlayersAliveThisRound--;
     }
 
     SaveScores();
+
+    if (mTotalPlayers <= 0)
+    {
+        mRoundActive = false;
+        mPotatoHolderId = -1;
+    }
 }
 
 PotatoPlayerPtr Server::GetPlayerForId(int inPlayerId)
@@ -284,7 +264,8 @@ PotatoPlayerPtr Server::GetPlayerForId(int inPlayerId)
     for (const auto& go : World::sInstance->GetGameObjects())
     {
         PotatoPlayer* pp = go->GetAsPotatoPlayer();
-        if (pp && (int)pp->GetPlayerId() == inPlayerId)
+        // Skip dying objects so we always return the live player
+        if (pp && (int)pp->GetPlayerId() == inPlayerId && !pp->DoesWantToDie())
             return std::static_pointer_cast<PotatoPlayer>(go);
     }
     return nullptr;
