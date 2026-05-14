@@ -22,3 +22,4 @@
 #include "Client.hpp"
 
 
+#include "PotatoPlayerClient.hpp"

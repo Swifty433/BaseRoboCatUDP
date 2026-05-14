@@ -26,6 +26,7 @@
     <ClInclude Include="MouseClient.hpp" />
     <ClInclude Include="NetworkManagerClient.hpp" />
     <ClInclude Include="PlayerSpriteComponent.hpp" />
+    <ClInclude Include="PotatoPlayerClient.hpp" />
     <ClInclude Include="RenderManager.hpp" />
     <ClInclude Include="ReplicationManagerClient.hpp" />
     <ClInclude Include="RoboCatClient.hpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="MouseClient.cpp" />
     <ClCompile Include="NetworkManagerClient.cpp" />
     <ClCompile Include="PlayerSpriteComponent.cpp" />
+    <ClCompile Include="PotatoPlayerClient.cpp" />
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="ReplicationManagerClient.cpp" />
     <ClCompile Include="RoboCatClient.cpp" />

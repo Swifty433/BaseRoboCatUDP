@@ -29,6 +29,44 @@ void PotatoPlayerServer::Update()
         moveList.Clear();
     }
 
+    // If this player has the potato, check for collision to pass it
+    if (HasPotato())
+    {
+        float   sourceRadius = GetCollisionRadius();
+        Vector3 sourceLocation = GetLocation();
+
+        for (const auto& go : World::sInstance->GetGameObjects())
+        {
+            PotatoPlayer* target = go->GetAsPotatoPlayer();
+            if (target && target != this && !target->DoesWantToDie())
+            {
+                Vector3 delta = target->GetLocation() - sourceLocation;
+                float   distSq = delta.LengthSq2D();
+                float   collisionDist = sourceRadius + target->GetCollisionRadius();
+
+                if (distSq < collisionDist * collisionDist)
+                {
+                    // Pass potato to this player
+                    SetHasPotato(false);
+                    NetworkManagerServer::sInstance->SetStateDirty(
+                        GetNetworkId(), PotatoPlayer::EPRS_Potato);
+
+                    PotatoPlayerServer* targetServer =
+                        static_cast<PotatoPlayerServer*>(target);
+                    targetServer->ReceivePotato();
+
+                    // Tell the server who holds it now
+                    static_cast<Server*>(Engine::s_instance.get())
+                        ->SetPotatoHolder(target->GetPlayerId());
+
+                    LOG("Player %d passed potato to player %d!",
+                        GetPlayerId(), target->GetPlayerId());
+                    break;
+                }
+            }
+        }
+    }
+
     if (!RoboMath::Is2DVectorEqual(oldLocation, GetLocation()) ||
         !RoboMath::Is2DVectorEqual(oldVelocity, GetVelocity()) ||
         oldRotation != GetRotation())
