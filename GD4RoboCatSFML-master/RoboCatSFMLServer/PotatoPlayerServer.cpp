@@ -2,7 +2,9 @@
 
 #include "RoboCatServerPCH.hpp"
 
-PotatoPlayerServer::PotatoPlayerServer() {}
+PotatoPlayerServer::PotatoPlayerServer() :
+    mPassCooldown(0.f)
+{}
 
 void PotatoPlayerServer::HandleDying()
 {
@@ -11,6 +13,7 @@ void PotatoPlayerServer::HandleDying()
 
 void PotatoPlayerServer::Update()
 {
+    
     Vector3 oldLocation = GetLocation();
     Vector3 oldVelocity = GetVelocity();
     float   oldRotation = GetRotation();
@@ -30,7 +33,17 @@ void PotatoPlayerServer::Update()
     }
 
     // If this player has the potato, check for collision to pass it
-    if (HasPotato())
+    if (mPassCooldown > 0.f)
+    {
+        mPassCooldown -= Timing::sInstance.GetDeltaTime();
+
+        if (mPassCooldown < 0.f)
+        {
+            mPassCooldown = 0.f;
+        }
+    }
+
+    if (HasPotato() && mPassCooldown <= 0.f)
     {
         float   sourceRadius = GetCollisionRadius();
         Vector3 sourceLocation = GetLocation();
@@ -54,6 +67,7 @@ void PotatoPlayerServer::Update()
                     PotatoPlayerServer* targetServer =
                         static_cast<PotatoPlayerServer*>(target);
                     targetServer->ReceivePotato();
+                    mPassCooldown = 0.75f;
 
                     // Tell the server who holds it now
                     static_cast<Server*>(Engine::s_instance.get())
@@ -85,6 +99,8 @@ void PotatoPlayerServer::Update()
 void PotatoPlayerServer::ReceivePotato()
 {
     SetHasPotato(true);
+    mPassCooldown = 0.75f;
+
     NetworkManagerServer::sInstance->SetStateDirty(
         GetNetworkId(), PotatoPlayer::EPRS_Potato);
 }

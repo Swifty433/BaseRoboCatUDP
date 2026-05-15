@@ -21,6 +21,8 @@ protected:
 
 private:
 
+	float mPassCooldown;
+
 	void HandleShooting();
 
 	ECatControlType	mCatControlType;
