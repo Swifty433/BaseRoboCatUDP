@@ -18,6 +18,8 @@ public:
     PotatoPlayerPtr SpawnPlayerForId(int inPlayerId);
     void            SetPotatoHolder(int inPlayerId) { mPotatoHolderId = inPlayerId; }
 
+    float GetRandomPotatoTime();
+
 private:
     Server();
     bool InitNetworkManager();

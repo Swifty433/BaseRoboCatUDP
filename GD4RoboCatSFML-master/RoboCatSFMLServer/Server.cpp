@@ -106,13 +106,15 @@ void Server::UpdatePotatoTimer()
         // Everyone respawns after 3 seconds
         mRoundActive = false;
         mRoundEndTimer = 3.f;
-        mPotatoTimer = mPotatoTimerMax;
+        mPotatoTimer = GetRandomPotatoTime();
+        mPotatoTimerMax = mPotatoTimer;
     }
 }
 
 void Server::StartNewRound()
 {
-    mPotatoTimer = mPotatoTimerMax;
+    mPotatoTimer = GetRandomPotatoTime();
+    mPotatoTimerMax = mPotatoTimer;
     mPotatoHolderId = -1;
 
     const auto& clients =
@@ -186,6 +188,10 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
             static_cast<PotatoPlayerServer*>(player.get())->ReceivePotato();
             mPotatoHolderId = playerId;
         }
+
+        mPotatoTimer = GetRandomPotatoTime();
+        mPotatoTimerMax = mPotatoTimer;
+
         mRoundActive = true;
         LOG("First player connected, round started!", 0);
     }
@@ -290,4 +296,13 @@ void Server::LoadScores()
         mCumulativeScores[playerId] = score;
     file.close();
     LOG("Scores loaded.", 0);
+}
+
+float Server::GetRandomPotatoTime()
+{
+    const float minTime = 5.f;
+    const float maxTime = 25.f;
+
+    float randomValue = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+    return minTime + randomValue * (maxTime - minTime);
 }
