@@ -32,9 +32,10 @@ void HUD::Render()
 		RenderLobby();
 		return;
 	}
-
-	RenderHealth();
-	RenderDeathMessage();
+	else {
+		RenderHealth();
+		RenderDeathMessage();
+	}
 }
 
 void HUD::RenderHealth()
