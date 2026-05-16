@@ -16,7 +16,10 @@ Server::Server() :
     mPotatoTimerMax(15.f),
     mTotalPlayers(0),
     mRoundActive(false),
-    mRoundEndTimer(0.f)
+    mRoundEndTimer(0.f),
+    mInLobby(true),
+    mLobbyStarted(false),
+    mLobbyTimer(120.f)
 {
     GameObjectRegistry::sInstance->RegisterCreationFunction(
         'PTOP', PotatoPlayerServer::StaticCreate);
@@ -56,6 +59,25 @@ void Server::DoFrame()
     NetworkManagerServer::sInstance->CheckForDisconnects();
 
     Engine::DoFrame();
+
+    //Adding in lobby
+    if (mInLobby)
+    {
+        if (mLobbyStarted)
+        {
+            mLobbyTimer -= Timing::sInstance.GetDeltaTime();
+
+
+            if (mLobbyTimer <= 0.f);
+            {
+                mLobbyTimer = 0.f;
+                mInLobby = false;
+
+                LOG("STARTING FIRST ROUND", 0);
+                StartNewRound();
+            }
+        }
+    }
 
     if (mRoundActive)
         UpdatePotatoTimer();
@@ -174,27 +196,25 @@ void Server::StartNewRound()
 void Server::HandleNewClient(ClientProxyPtr inClientProxy)
 {
     int playerId = inClientProxy->GetPlayerId();
+
     ScoreBoardManager::sInstance->AddEntry(playerId, inClientProxy->GetName());
     mCumulativeScores[playerId] = 0;
     mTotalPlayers++;
 
-    PotatoPlayerPtr player = SpawnPlayerForId(playerId);
+    
 
     // First player gets the potato and starts the round
-    if (mTotalPlayers == 1)
+    if (mInLobby)
     {
-        if (player)
-        {
-            static_cast<PotatoPlayerServer*>(player.get())->ReceivePotato();
-            mPotatoHolderId = playerId;
-        }
-
-        mPotatoTimer = GetRandomPotatoTime();
-        mPotatoTimerMax = mPotatoTimer;
-
-        mRoundActive = true;
-        LOG("First player connected, round started!", 0);
+        mLobbyStarted = true;
+        LOG("Player 5d joined", playerId);
+        return;
     }
+
+    PotatoPlayerPtr player = SpawnPlayerForId(playerId);
+    LOG("Player %d joined later", playerId);
+
+
 }
 
 PotatoPlayerPtr Server::SpawnPlayerForId(int inPlayerId)
@@ -262,6 +282,10 @@ void Server::HandleLostClient(ClientProxyPtr inClientProxy)
     {
         mRoundActive = false;
         mPotatoHolderId = -1;
+
+        mInLobby = true;
+        mLobbyStarted = false;
+        mLobbyTimer = 120.f;
     }
 }
 

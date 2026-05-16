@@ -20,6 +20,7 @@ private:
 	void	RenderScoreBoard();
 	void	RenderHealth();
 	void	RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
+	void RenderLobby();
 
 	Vector3										mBandwidthOrigin;
 	Vector3										mRoundTripTimeOrigin;

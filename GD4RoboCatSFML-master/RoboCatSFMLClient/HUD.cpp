@@ -24,6 +24,13 @@ void HUD::Render()
 	RenderBandWidth();
 	RenderRoundTripTime();
 	RenderScoreBoard();
+
+	if (NetworkManagerClient::sInstance->IsInLobby())
+	{
+		RenderLobby();
+		return;
+	}
+
 	RenderHealth();
 }
 
@@ -75,5 +82,23 @@ void HUD::RenderText(const string& inStr, const Vector3& origin, const Vector3& 
 	text.setPosition(origin.mX, origin.mY);
 	text.setFont(*FontManager::sInstance->GetFont("carlito"));
 	WindowManager::sInstance->draw(text);
+}
+
+void HUD::RenderLobby()
+{
+	float timeRemaining =
+		NetworkManagerClient::sInstance->GetLobbyTimeRemaining();
+
+	int seconds = static_cast<int>(timeRemaining);
+	if (seconds < 0)
+		seconds = 0;
+
+	string title = "LOBBY";
+	string message = StringUtils::Sprintf("Game starts in %d seconds", seconds);
+	string waiting = "Waiting for players...";
+
+	RenderText(title, Vector3(850.f, 360.f, 0.f), Colors::White);
+	RenderText(message, Vector3(760.f, 430.f, 0.f), Colors::White);
+	RenderText(waiting, Vector3(780.f, 500.f, 0.f), Colors::White);
 }
 

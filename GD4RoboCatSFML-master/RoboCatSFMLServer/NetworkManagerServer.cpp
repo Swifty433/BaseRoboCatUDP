@@ -6,6 +6,7 @@ NetworkManagerServer* NetworkManagerServer::sInstance;
 NetworkManagerServer::NetworkManagerServer() :
 	mNewPlayerId(1),
 	mNewNetworkId(1),
+	mTimeOfLastSatePacket(0.f),
 	mTimeBetweenStatePackets(0.033f),
 	mClientDisconnectTimeout(3.f)
 {
@@ -130,6 +131,10 @@ void NetworkManagerServer::RespawnCats()
 
 void NetworkManagerServer::SendOutgoingPackets()
 {
+	float time = Timing::sInstance.GetTimef();
+
+	bool shouldSendStatePacket =
+		time > mTimeOfLastSatePacket + mTimeBetweenStatePackets;
 	//let's send a client a state packet whenever their move has come in...
 	for (auto it = mAddressToClientMap.begin(), end = mAddressToClientMap.end(); it != end; ++it)
 	{
@@ -141,6 +146,11 @@ void NetworkManagerServer::SendOutgoingPackets()
 		{
 			SendStatePacketToClient(clientProxy);
 		}
+	}
+
+	if (shouldSendStatePacket)
+	{
+		mTimeOfLastSatePacket = time;
 	}
 }
 
@@ -165,6 +175,14 @@ void NetworkManagerServer::SendStatePacketToClient(ClientProxyPtr inClientProxy)
 
 	InFlightPacket* ifp = inClientProxy->GetDeliveryNotificationManager().WriteState(statePacket);
 
+	Server* server = static_cast<Server*>(Engine::s_instance.get());
+
+	bool isInLobby = server->IsInLobby();
+	float lobbyTimeRemaining = server->GetLobbyTimeRemaining();
+
+	statePacket.Write(isInLobby);
+	statePacket.Write(lobbyTimeRemaining);
+	
 	WriteLastMoveTimestampIfDirty(statePacket, inClientProxy);
 
 	AddScoreBoardStateToPacket(statePacket);

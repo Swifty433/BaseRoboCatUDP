@@ -20,6 +20,12 @@ public:
 	float									GetRoundTripTime()		const { return mAvgRoundTripTime.GetValue(); }
 	int		GetPlayerId()											const { return mPlayerId; }
 	float	GetLastMoveProcessedByServerTimestamp()					const { return mLastMoveProcessedByServerTimestamp; }
+
+	//lobby
+	bool IsInLobby() const { return mIsInLobby; }
+	float GetLobbyTimeRemaining() const { return mLobbyTimeRemaining; }
+
+
 private:
 	NetworkManagerClient();
 	void Init(const SocketAddress& inServerAddress, const string& inName);
@@ -57,6 +63,10 @@ private:
 
 	WeightedTimedMovingAverage	mAvgRoundTripTime;
 	float						mLastRoundTripTime;
+
+	//lobby
+	bool  mIsInLobby;
+	float mLobbyTimeRemaining;
 
 };
 

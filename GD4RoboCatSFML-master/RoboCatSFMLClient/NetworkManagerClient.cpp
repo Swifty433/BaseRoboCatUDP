@@ -11,7 +11,10 @@ namespace
 NetworkManagerClient::NetworkManagerClient() :
 	mState(NCS_Uninitialized),
 	mDeliveryNotificationManager(true, false),
-	mLastRoundTripTime(0.f)
+	mLastRoundTripTime(0.f),
+	mIsInLobby(true),
+	mLobbyTimeRemaining(120.f)
+
 {
 }
 
@@ -105,6 +108,10 @@ void NetworkManagerClient::HandleStatePacket(InputMemoryBitStream& inInputStream
 {
 	if (mState == NCS_Welcomed)
 	{
+		inInputStream.Read(mIsInLobby);
+		inInputStream.Read(mLobbyTimeRemaining);
+
+
 		ReadLastMoveProcessedOnServerTimestamp(inInputStream);
 
 		//old

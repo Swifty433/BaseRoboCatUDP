@@ -20,6 +20,9 @@ public:
 
     float GetRandomPotatoTime();
 
+    bool IsInLobby() const { return mInLobby; }
+    float GetLobbyTimeRemaining() const { return mLobbyTimer; }
+
 private:
     Server();
     bool InitNetworkManager();
@@ -30,10 +33,19 @@ private:
     void SaveScores();
     void LoadScores();
 
-    int   mPotatoHolderId;
-    float mPotatoTimer;
-    float mPotatoTimerMax;
-    int   mTotalPlayers;
+
+
+
+
+    unordered_map<int, int> mCumulativeScores;
+
+    bool  mRoundActive;
+    float mRoundEndTimer;
+
+    bool  mInLobby;
+    bool  mLobbyStarted;
+    float mLobbyTimer;
+};
 
     unordered_map<int, int> mCumulativeScores;
 
