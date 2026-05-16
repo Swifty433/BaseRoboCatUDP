@@ -42,19 +42,6 @@ PotatoPlayerClient::PotatoPlayerClient() :
 
 void PotatoPlayerClient::HandleDying()
 {
-    if (mHealth <= 0)
-    {
-        Vector3 deathLocation = GetLocation();
-        GameObjectPtr explosion(new ExplosionEffect(deathLocation));
-        World::sInstance->AddGameObject(explosion);
-
-
-
-        if (GetPlayerId() == (uint32_t)NetworkManagerClient::sInstance->GetPlayerId())
-        {
-            HUD::sInstance->SetPlayerHealth(0);
-        }
-    }
     GameObject::HandleDying();
 }
 

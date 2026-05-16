@@ -1,4 +1,5 @@
 #include "RoboCatClientPCH.hpp"
+#include "ExplosionEffect.hpp"
 
 NetworkManagerClient* NetworkManagerClient::sInstance;
 
@@ -132,6 +133,23 @@ void NetworkManagerClient::HandleStatePacket(InputMemoryBitStream& inInputStream
 		if (hasNewDeathEvent)
 		{
 			HUD::sInstance->ShowDeathMessage(lastDeadPlayerId);
+
+			for (const auto& pair : m_network_id_to_game_object_map)
+			{
+				PotatoPlayer* player = pair.second->GetAsPotatoPlayer();
+
+				if (player && (int)player->GetPlayerId() == lastDeadPlayerId)
+				{
+					Vector3 deathLocation = player->GetLocation();
+
+					GameObjectPtr explosion(new ExplosionEffect(deathLocation));
+					World::sInstance->AddGameObject(explosion);
+
+					AudioManager::sInstance->PlaySound("explosionSound.mp3");
+
+					break;
+				}
+			}
 		}
 
 		//tell the replication manager to handle the rest...

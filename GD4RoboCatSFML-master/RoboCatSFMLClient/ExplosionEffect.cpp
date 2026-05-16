@@ -7,7 +7,7 @@ ExplosionEffect::ExplosionEffect(const Vector3& inLocation) :
 {
     SetLocation(inLocation);
 
-    SetScale(0.4f);
+    SetScale(0.8f);
     mSprite.reset(new SpriteComponent(this));
     mSprite->SetTexture(TextureManager::sInstance->GetTexture("explosion1"));
     
