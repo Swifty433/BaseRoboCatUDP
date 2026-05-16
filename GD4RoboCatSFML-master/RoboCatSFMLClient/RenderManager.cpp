@@ -7,6 +7,18 @@ RenderManager::RenderManager()
 {
 	view.reset(sf::FloatRect(0, 0, 1920, 1080));
 	WindowManager::sInstance->setView(view);
+
+	if(mBackgroundTexture.loadFromFile("background.png"))
+	{
+		mBackgroundSprite.setTexture(mBackgroundTexture);
+		float scaleX = 1920.f / mBackgroundTexture.getSize().x;
+		float scaleY = 1080.f / mBackgroundTexture.getSize().y;
+		mBackgroundSprite.setScale(scaleX, scaleY);
+	}
+	else
+	{
+		LOG("RenderManager: Failed to load background texture",0);
+	}
 }
 
 
@@ -68,7 +80,9 @@ void RenderManager::Render()
 	//
 	// Clear the back buffer
 	//
-	WindowManager::sInstance->clear(sf::Color(100, 149, 237, 255));
+	WindowManager::sInstance->clear(sf::Color(sf::Color::White));
+
+	WindowManager::sInstance->draw(mBackgroundSprite);
 
 	RenderManager::sInstance->RenderComponents();
 

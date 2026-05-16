@@ -24,6 +24,7 @@ TextureManager::TextureManager()
 
     CacheTexture("player", "player.png");
     CacheTexture("player_potato", "player_potato.png");
+	CacheTexture("background", "background.png");
 
     //normal Player
     CacheTexture("player_up", "player_up.png");

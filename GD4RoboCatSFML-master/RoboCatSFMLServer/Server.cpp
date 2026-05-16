@@ -67,6 +67,11 @@ void Server::DoFrame()
         {
             mLobbyTimer -= Timing::sInstance.GetDeltaTime();
 
+            // Press SPACE on the server console to skip lobby timer
+            if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+            {
+                mLobbyTimer = 0.f;
+            }
 
             if (mLobbyTimer <= 0.f)
             {
