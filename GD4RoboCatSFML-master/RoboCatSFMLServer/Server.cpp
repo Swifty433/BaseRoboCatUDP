@@ -68,7 +68,7 @@ void Server::DoFrame()
             mLobbyTimer -= Timing::sInstance.GetDeltaTime();
 
 
-            if (mLobbyTimer <= 0.f);
+            if (mLobbyTimer <= 0.f)
             {
                 mLobbyTimer = 0.f;
                 mInLobby = false;

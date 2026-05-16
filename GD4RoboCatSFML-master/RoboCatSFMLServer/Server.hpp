@@ -16,7 +16,8 @@ public:
 
     PotatoPlayerPtr GetPlayerForId(int inPlayerId);
     PotatoPlayerPtr SpawnPlayerForId(int inPlayerId);
-    void            SetPotatoHolder(int inPlayerId) { mPotatoHolderId = inPlayerId; }
+
+    void SetPotatoHolder(int inPlayerId) { mPotatoHolderId = inPlayerId; }
 
     float GetRandomPotatoTime();
 
@@ -39,16 +40,18 @@ private:
 
     unordered_map<int, int> mCumulativeScores;
 
+    int mPotatoHolderId;
+    float PotatoTimer;
+    float mPotatoTimerMax;
+    int mTotalPlayers;
+    float mPotatoTimer;
+    
+
     bool  mRoundActive;
     float mRoundEndTimer;
 
     bool  mInLobby;
     bool  mLobbyStarted;
     float mLobbyTimer;
-};
 
-    unordered_map<int, int> mCumulativeScores;
-
-    bool  mRoundActive;
-    float mRoundEndTimer;
 };
