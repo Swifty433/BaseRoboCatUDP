@@ -51,6 +51,14 @@ void Client::DoFrame()
 
 void Client::HandleEvent(sf::Event& p_event)
 {
+	if (p_event.type == sf::Event::KeyPressed &&
+		p_event.key.code == sf::Keyboard::Escape)
+	{
+		WindowManager::sInstance->close();
+		SetShouldKeepRunning(false);
+		return;
+	}
+
 	switch (p_event.type)
 	{
 	case sf::Event::KeyPressed:

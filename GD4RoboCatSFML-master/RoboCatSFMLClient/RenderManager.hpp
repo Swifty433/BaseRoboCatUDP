@@ -24,7 +24,8 @@ private:
 
 	sf::View view;
 
-
+	sf::Texture mBackgroundTexture;
+	sf::Sprite mBackgroundSprite;
 };
 
 
