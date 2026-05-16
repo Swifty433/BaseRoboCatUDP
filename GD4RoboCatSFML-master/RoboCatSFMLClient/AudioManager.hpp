@@ -9,7 +9,7 @@ class AudioManager
 		static void StaticInt();
 		static std::unique_ptr<AudioManager> sInstance;
 
-		void PlayMusic(const std::string& inFilePath);
+		void PlayMusic(const std::string& inFilePath, bool loop = true);
 		void StopMusic();
 		void SetMusicVolume(float inVolume);
 

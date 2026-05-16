@@ -12,17 +12,18 @@ void AudioManager::StaticInt()
 
 AudioManager::AudioManager()
 {
-	PlayMusic("music.ogg");
+	PlayMusic("music.ogg", true);
 	SetMusicVolume(50.f);
 }
 
-void AudioManager::PlayMusic(const std::string& inFilePath)
+void AudioManager::PlayMusic(const std::string& inFilePath, bool loop)
 {
 	if (!mMusic.openFromFile(inFilePath))
 	{
 		LOG("Failed to load music file %s", inFilePath.c_str());
 		return;
 	}
+	mMusic.setLoop(loop);
 	mMusic.play();
 	LOG("AudioManager: Playing music %s", inFilePath.c_str());
 }
