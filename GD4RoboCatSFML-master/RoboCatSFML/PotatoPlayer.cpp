@@ -3,8 +3,8 @@
 
 #include "RoboCatPCH.hpp"
 
-const float PP_WORLD_HEIGHT = 720.f;
-const float PP_WORLD_WIDTH = 1280.f;
+const float PP_WORLD_HEIGHT = 1080.f;
+const float PP_WORLD_WIDTH = 1920.f;
 
 PotatoPlayer::PotatoPlayer() :
     GameObject(),

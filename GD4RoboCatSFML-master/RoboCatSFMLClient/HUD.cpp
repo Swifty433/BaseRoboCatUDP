@@ -71,7 +71,7 @@ void HUD::RenderText(const string& inStr, const Vector3& origin, const Vector3& 
 	sf::Text text;
 	text.setString(inStr);
 	text.setFillColor(sf::Color(inColor.mX, inColor.mY, inColor.mZ, 255));
-	text.setCharacterSize(50);
+	text.setCharacterSize(28);
 	text.setPosition(origin.mX, origin.mY);
 	text.setFont(*FontManager::sInstance->GetFont("carlito"));
 	WindowManager::sInstance->draw(text);

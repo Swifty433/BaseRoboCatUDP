@@ -126,7 +126,7 @@ void Server::StartNewRound()
     float angleStep = (2.f * 3.14159f) / std::max(1, (int)clients.size());
     float angle = 0.f;
     float spawnRadius = 300.f;
-    Vector3 center(640.f, 360.f, 0.f);
+    Vector3 center(960.f, 540.f, 0.f);
 
     for (const auto& pair : clients)
     {
@@ -206,7 +206,7 @@ PotatoPlayerPtr Server::SpawnPlayerForId(int inPlayerId)
         ScoreBoardManager::sInstance->GetEntry(inPlayerId)->GetColor());
     player->SetPlayerId(inPlayerId);
     player->SetLocation(Vector3(
-        640.f - static_cast<float>(inPlayerId) * 60.f, 360.f, 0.f));
+        960.f - static_cast<float>(inPlayerId) * 60.f, 540.f, 0.f));
 
     LOG("Spawned PotatoPlayer for player %d", inPlayerId);
     return player;
