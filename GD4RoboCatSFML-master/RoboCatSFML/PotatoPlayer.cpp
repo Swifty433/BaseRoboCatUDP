@@ -20,7 +20,7 @@ PotatoPlayer::PotatoPlayer() :
     mLastMoveTimestamp(0.f)
 {
     SetCollisionRadius(40.f);
-    SetScale(0.5f);
+    SetScale(5);
 }
 
 void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputState)

@@ -2,31 +2,41 @@
 
 #include "RoboCatClientPCH.hpp"
 
+//PotatoPlayerClient::PotatoPlayerClient() :
+//    mTimeLocationBecameOutOfSync(0.f),
+//    mTimeVelocityBecameOutOfSync(0.f)
+//{
+//    TexturePtr normalTex = TextureManager::sInstance->GetTexture("player");
+//    TexturePtr potatoTex = TextureManager::sInstance->GetTexture("player_potato");
+//
+//    LOG("PotatoPlayerClient constructor - normalTex: %s, potatoTex: %s",
+//        normalTex ? "OK" : "NULL",
+//        potatoTex ? "OK" : "NULL");
+//
+//    if (normalTex && potatoTex)
+//    {
+//        mNormalSprite.reset(new PlayerSpriteComponent(this));
+//        mNormalSprite->SetTexture(normalTex);
+//        mNormalSprite->SetVisibility(true);
+//
+//        mPotatoSprite.reset(new PlayerSpriteComponent(this));
+//        mPotatoSprite->SetTexture(potatoTex);
+//        mPotatoSprite->SetVisibility(false);
+//    }
+//    else
+//    {
+//        LOG("WARNING: textures not loaded, sprites will be null!", 0);
+//    }
+//}
+
 PotatoPlayerClient::PotatoPlayerClient() :
     mTimeLocationBecameOutOfSync(0.f),
     mTimeVelocityBecameOutOfSync(0.f)
 {
-    TexturePtr normalTex = TextureManager::sInstance->GetTexture("player");
-    TexturePtr potatoTex = TextureManager::sInstance->GetTexture("player_potato");
-
-    LOG("PotatoPlayerClient constructor - normalTex: %s, potatoTex: %s",
-        normalTex ? "OK" : "NULL",
-        potatoTex ? "OK" : "NULL");
-
-    if (normalTex && potatoTex)
-    {
-        mNormalSprite.reset(new PlayerSpriteComponent(this));
-        mNormalSprite->SetTexture(normalTex);
-        mNormalSprite->SetVisibility(true);
-
-        mPotatoSprite.reset(new PlayerSpriteComponent(this));
-        mPotatoSprite->SetTexture(potatoTex);
-        mPotatoSprite->SetVisibility(false);
-    }
-    else
-    {
-        LOG("WARNING: textures not loaded, sprites will be null!", 0);
-    }
+    // Single sprite component — PlayerSpriteComponent handles direction and potato sprite swapping internally
+    mNormalSprite.reset(new PlayerSpriteComponent(this));
+    mNormalSprite->SetVisibility(true);
+    mPotatoSprite = nullptr;
 }
 
 void PotatoPlayerClient::HandleDying()
@@ -38,12 +48,12 @@ void PotatoPlayerClient::HandleDying()
 
 void PotatoPlayerClient::Update()
 {
-    // Always swap sprite every frame based on current mHasPotato value
-    if (mNormalSprite && mPotatoSprite)
-    {
-        mNormalSprite->SetVisibility(!mHasPotato);
-        mPotatoSprite->SetVisibility(mHasPotato);
-    }
+    //// Always swap sprite every frame based on current mHasPotato value
+    //if (mNormalSprite && mPotatoSprite)
+    //{
+    //    mNormalSprite->SetVisibility(!mHasPotato);
+    //    mPotatoSprite->SetVisibility(mHasPotato);
+    //}
 
     if (GetPlayerId() == (uint32_t)NetworkManagerClient::sInstance->GetPlayerId())
     {
