@@ -14,6 +14,7 @@ bool Client::StaticInit()
 	
 
 	HUD::StaticInit();
+	AudioManager::StaticInt();
 
     Client* client = new Client();
     s_instance.reset(client);

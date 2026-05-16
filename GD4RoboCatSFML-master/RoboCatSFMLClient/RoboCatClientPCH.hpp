@@ -1,6 +1,7 @@
 #include "RoboCatShared.hpp"
 
 #include "SFML\Graphics.hpp"
+#include "SFML\Audio.hpp"
 
 #include "InputManager.hpp"
 #include "SpriteComponent.hpp"
@@ -9,6 +10,7 @@
 #include "FontManager.hpp"
 #include "RenderManager.hpp"
 #include "WindowManager.hpp"
+#include "AudioManager.hpp"
 
 #include "RoboCatClient.hpp"
 #include "MouseClient.hpp"
