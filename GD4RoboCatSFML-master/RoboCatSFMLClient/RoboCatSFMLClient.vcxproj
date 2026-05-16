@@ -22,6 +22,7 @@
     <ClInclude Include="AudioManager.hpp" />
     <ClInclude Include="Client.hpp" />
     <ClInclude Include="FontManager.hpp" />
+    <ClInclude Include="ExplosionEffect.hpp" />
     <ClInclude Include="HUD.hpp" />
     <ClInclude Include="InputManager.hpp" />
     <ClInclude Include="MouseClient.hpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientMain.cpp" />
+    <ClCompile Include="ExplosionEffect.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="InputManager.cpp" />

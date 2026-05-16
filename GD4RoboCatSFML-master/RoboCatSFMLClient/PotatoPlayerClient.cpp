@@ -1,6 +1,7 @@
 // Joseph Byrne D00255161
 
 #include "RoboCatClientPCH.hpp"
+#include "ExplosionEffect.hpp"
 
 //PotatoPlayerClient::PotatoPlayerClient() :
 //    mTimeLocationBecameOutOfSync(0.f),
@@ -41,6 +42,10 @@ PotatoPlayerClient::PotatoPlayerClient() :
 
 void PotatoPlayerClient::HandleDying()
 {
+    Vector3 deathLocation = GetLocation();
+    GameObejectPtr explision(new ExplosionEffect(deathLocation));
+
+
     PotatoPlayer::HandleDying();
     if (GetPlayerId() == (uint32_t)NetworkManagerClient::sInstance->GetPlayerId())
         HUD::sInstance->SetPlayerHealth(0);
