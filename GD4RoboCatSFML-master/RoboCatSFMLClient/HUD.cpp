@@ -9,7 +9,9 @@ HUD::HUD() :
 	mRoundTripTimeOrigin(580.f, 10.f, 0.0f),
 	mScoreOffset(0.f, 50.f, 0.0f),
 	mHealthOffset(1000, 10.f, 0.0f),
-	mHealth(0)
+	mHealth(0),
+	mDeathMessage(""),
+	mDeathMessageTimer(0.f)
 {
 }
 
@@ -32,6 +34,7 @@ void HUD::Render()
 	}
 
 	RenderHealth();
+	RenderDeathMessage();
 }
 
 void HUD::RenderHealth()
@@ -100,5 +103,55 @@ void HUD::RenderLobby()
 	RenderText(title, Vector3(850.f, 360.f, 0.f), Colors::White);
 	RenderText(message, Vector3(760.f, 430.f, 0.f), Colors::White);
 	RenderText(waiting, Vector3(780.f, 500.f, 0.f), Colors::White);
+}
+
+void HUD::ShowDeathMessage(uint32_t inPlayerId)
+{
+	string playerName = StringUtils::Sprintf("Player %d", inPlayerId);
+
+	ScoreBoardManager::Entry* entry =
+		ScoreBoardManager::sInstance->GetEntry(inPlayerId);
+
+	if (entry)
+	{
+		playerName = entry->GetPlayerName();
+	}
+
+	mDeathMessage = playerName + " exploded!";
+	mDeathMessageTimer = 3.f;
+}
+
+void HUD::RenderDeathMessage()
+{
+	if (mDeathMessageTimer <= 0.f)
+	{
+		return;
+	}
+
+	mDeathMessageTimer -= Timing::sInstance.GetDeltaTime();
+
+	sf::RectangleShape overlay;
+	overlay.setSize(sf::Vector2f(1920.f, 1080.f));
+	overlay.setPosition(0.f, 0.f);
+	overlay.setFillColor(sf::Color(80, 80, 80, 120));
+
+	WindowManager::sInstance->draw(overlay);
+
+	sf::Text text;
+	text.setString(mDeathMessage);
+	text.setFont(*FontManager::sInstance->GetFont("carlito"));
+	text.setCharacterSize(64);
+	text.setFillColor(sf::Color::White);
+
+	sf::FloatRect bounds = text.getLocalBounds();
+
+	text.setOrigin(
+		bounds.left + bounds.width / 2.f,
+		bounds.top + bounds.height / 2.f
+	);
+
+	text.setPosition(960.f, 540.f);
+
+	WindowManager::sInstance->draw(text);
 }
 

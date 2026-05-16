@@ -68,5 +68,7 @@ private:
 	bool  mIsInLobby;
 	float mLobbyTimeRemaining;
 
+	int mLastDeathEventIdSeen;
+
 };
 

@@ -24,6 +24,9 @@ public:
     bool IsInLobby() const { return mInLobby; }
     float GetLobbyTimeRemaining() const { return mLobbyTimer; }
 
+    int GetLastDeadPlayerId() const { return mLastDeadPlayerId; }
+    int GetDeathEventId() const { return mDeathEventId; }
+
 private:
     Server();
     bool InitNetworkManager();
@@ -54,4 +57,6 @@ private:
     bool  mLobbyStarted;
     float mLobbyTimer;
 
+    int mLastDeadPlayerId;
+    int mDeathEventId;
 };

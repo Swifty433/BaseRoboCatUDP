@@ -18,5 +18,7 @@ private:
 	uint32_t WriteDestroyAction(OutputMemoryBitStream& inOutputStream, int inNetworkId, uint32_t inDirtyState);
 
 	unordered_map< int, ReplicationCommand >	mNetworkIdToReplicationCommand;
+
+	int mLastDeathEventIdSeen;
 };
 

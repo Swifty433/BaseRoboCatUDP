@@ -11,6 +11,8 @@ public:
 
 	void SetPlayerHealth(int inHealth) { mHealth = inHealth; }
 
+	void ShowDeathMessage(uint32_t inPlayerId);
+
 private:
 
 	HUD();
@@ -21,6 +23,10 @@ private:
 	void	RenderHealth();
 	void	RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
 	void RenderLobby();
+	void RenderDeathMessage();
+
+	string mDeathMessage;
+	float mDeathMessageTimer;
 
 	Vector3										mBandwidthOrigin;
 	Vector3										mRoundTripTimeOrigin;

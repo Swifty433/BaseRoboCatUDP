@@ -180,8 +180,13 @@ void NetworkManagerServer::SendStatePacketToClient(ClientProxyPtr inClientProxy)
 	bool isInLobby = server->IsInLobby();
 	float lobbyTimeRemaining = server->GetLobbyTimeRemaining();
 
+	int lastDeadPlayerId = server->GetLastDeadPlayerId();
+	int deathEventId = server->GetDeathEventId();
+
 	statePacket.Write(isInLobby);
 	statePacket.Write(lobbyTimeRemaining);
+	statePacket.Write(lastDeadPlayerId);
+	statePacket.Write(deathEventId);
 	
 	WriteLastMoveTimestampIfDirty(statePacket, inClientProxy);
 

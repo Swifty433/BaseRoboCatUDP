@@ -13,7 +13,8 @@ NetworkManagerClient::NetworkManagerClient() :
 	mDeliveryNotificationManager(true, false),
 	mLastRoundTripTime(0.f),
 	mIsInLobby(true),
-	mLobbyTimeRemaining(120.f)
+	mLobbyTimeRemaining(120.f),
+	mLastDeathEventIdSeen(0)
 
 {
 }
@@ -111,12 +112,27 @@ void NetworkManagerClient::HandleStatePacket(InputMemoryBitStream& inInputStream
 		inInputStream.Read(mIsInLobby);
 		inInputStream.Read(mLobbyTimeRemaining);
 
+		int lastDeadPlayerId;
+		int deathEventId;
+
+		inInputStream.Read(lastDeadPlayerId);
+		inInputStream.Read(deathEventId);
+
+		bool hasNewDeathEvent =
+			deathEventId != mLastDeathEventIdSeen && lastDeadPlayerId > 0;
+
+		mLastDeathEventIdSeen = deathEventId;
 
 		ReadLastMoveProcessedOnServerTimestamp(inInputStream);
 
 		//old
 		//HandleGameObjectState( inPacketBuffer );
 		HandleScoreBoardState(inInputStream);
+
+		if (hasNewDeathEvent)
+		{
+			HUD::sInstance->ShowDeathMessage(lastDeadPlayerId);
+		}
 
 		//tell the replication manager to handle the rest...
 		mReplicationManagerClient.Read(inInputStream);

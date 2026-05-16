@@ -12,6 +12,8 @@ bool Server::StaticInit()
 
 Server::Server() :
     mPotatoHolderId(-1),
+    mLastDeadPlayerId(-1),
+    mDeathEventId(0),
     mPotatoTimer(15.f),
     mPotatoTimerMax(15.f),
     mTotalPlayers(0),
@@ -103,6 +105,9 @@ void Server::UpdatePotatoTimer()
         PotatoPlayerPtr holder = GetPlayerForId(mPotatoHolderId);
         if (holder)
         {
+            mLastDeadPlayerId = mPotatoHolderId;
+            mDeathEventId++;
+
             LOG("Player %d exploded! Everyone else gets a point.", mPotatoHolderId);
 
             // Give all OTHER connected players 1 point
