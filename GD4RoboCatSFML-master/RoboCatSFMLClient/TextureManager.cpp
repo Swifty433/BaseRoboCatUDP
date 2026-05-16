@@ -46,9 +46,9 @@ TextureManager::TextureManager()
 	CacheTexture("player_potato_downright", "player_potato_downright.png");
 
 	//Explosion
-	CacheTexture("explosion1", "explosion_1.png");
-	CacheTexture("explosion1", "explosion_2.png");
-	CacheTexture("explosion1", "explosion_3.png");
+	CacheTexture("explosion1", "explosion1.PNG");
+	CacheTexture("explosion2", "explosion2.PNG");
+	CacheTexture("explosion3", "explosion3.PNG");
 }
 
 TexturePtr TextureManager::GetTexture(const string& inTextureName)

@@ -2,40 +2,37 @@
 #include "ExplosionEffect.hpp"
 
 ExplosionEffect::ExplosionEffect(const Vector3& inLocation) :
-	mTimer(0.f),
-	mCurrentFrame(0)
+    mTimer(0.f),
+    mCurrentFrame(0)
 {
-	SetLocation(inLocation);
-	SetScale(5.f);
+    SetLocation(inLocation);
+    SetScale(5.f);
 
-	SetTexture(TextureManager::sInstance->GetTexture("explosion_1"));
+    mSprite.reset(new SpriteComponent(this));
+    mSprite->SetTexture(TextureManager::sInstance->GetTexture("explosion1"));
+    SetScale(0.25f);
 }
-
 void ExplosionEffect::Update()
 {
 	mTimer += Timing::sInstance.GetDeltaTime();
 
-	int newFrame = static_cast<int>(mTimer / 0.75f);
+    const float frameTime = 0.3f;
+    const int totalFrames = 3;
+    const float totalAnimationTime = frameTime * totalFrames;
 
-	if (newFrame != mCurrentFrame)
-	{
-		mCurrentFrame = newFrame;
+    if (mTimer >= totalAnimationTime)
+    {
+        SetDoesWantToDie(true);
+        return;
+    }
 
-		if (mCurrentFrame == 0)
-		{
-			SetTexture(TextureManager::sInstance->GetTexture("explosion_1"));
-		}
-		else if (mCurrentFrame == 1)
-		{
-			SetTexture(TextureManager::sInstance->GetTexture("explosion_2"));
-		}
-		else if (mCurrentFrame == 2)
-		{
-			SetTexture(TextureManager::sInstance->GetTexture("explosion_2"));
-		}
-		else
-		{
-			SetDoesWantToDie(true);
-		}
-	}
+    int newFrame = static_cast<int>(mTimer / frameTime);
+
+    if (newFrame != mCurrentFrame)
+    {
+        mCurrentFrame = newFrame;
+
+        string textureName = StringUtils::Sprintf("explosion%d", mCurrentFrame + 1);
+        mSprite->SetTexture(TextureManager::sInstance->GetTexture(textureName));
+    }
 }

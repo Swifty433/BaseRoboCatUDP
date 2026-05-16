@@ -21,7 +21,7 @@ Server::Server() :
     mRoundEndTimer(0.f),
     mInLobby(true),
     mLobbyStarted(false),
-    mLobbyTimer(120.f)
+    mLobbyTimer(15.f)
 {
     GameObjectRegistry::sInstance->RegisterCreationFunction(
         'PTOP', PotatoPlayerServer::StaticCreate);
@@ -290,7 +290,7 @@ void Server::HandleLostClient(ClientProxyPtr inClientProxy)
 
         mInLobby = true;
         mLobbyStarted = false;
-        mLobbyTimer = 120.f;
+        mLobbyTimer = 15.f;
     }
 }
 
