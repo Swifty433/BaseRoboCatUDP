@@ -37,3 +37,15 @@ void AudioManager::SetMusicVolume(float inVolume)
 	mMusic.setVolume(inVolume);
 	LOG("AudioManager: Set music volume to %.2f", inVolume);
 }
+
+void AudioManager::PlaySound(const std::string& inFilePath)
+{
+	if (!mSoundBuffer.loadFromFile(inFilePath))
+	{
+		LOG("AudioManager: Failed to load sound file %s", inFilePath.c_str());
+		return;
+	}
+	mSound.setBuffer(mSoundBuffer);
+	mSound.play();
+	LOG("AudioManager: Playing sound %s", inFilePath.c_str());
+}

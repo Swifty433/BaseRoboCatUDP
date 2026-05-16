@@ -13,9 +13,15 @@ class AudioManager
 		void StopMusic();
 		void SetMusicVolume(float inVolume);
 
+		void PlaySound(const std::string& inFilePath);
+
 	private:
 		AudioManager();
 
 		sf::Music mMusic;
+
+		//sound buffer 
+		sf::SoundBuffer mSoundBuffer;
+		sf::Sound       mSound;
 };
 
