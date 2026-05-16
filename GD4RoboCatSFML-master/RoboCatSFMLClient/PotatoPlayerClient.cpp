@@ -136,6 +136,13 @@ void PotatoPlayerClient::Read(InputMemoryBitStream& inInputStream)
     {
         bool hasPotato;
         inInputStream.Read(hasPotato);
+
+		//play the pass sound if we just got the potato
+		if (hasPotato && !mHasPotato && GetPlayerId() == (uint32_t)NetworkManagerClient::sInstance->GetPlayerId())
+        {
+            AudioManager::sInstance->PlaySound("pass.wav");
+        }
+
         mHasPotato = hasPotato;
         readState |= EPRS_Potato;
 
