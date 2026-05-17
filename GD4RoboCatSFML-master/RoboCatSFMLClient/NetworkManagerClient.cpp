@@ -141,7 +141,7 @@ void NetworkManagerClient::HandleStatePacket(InputMemoryBitStream& inInputStream
 				if (player && (int)player->GetPlayerId() == lastDeadPlayerId)
 				{
 					Vector3 deathLocation = player->GetLocation();
-
+					//play sound effect on death and trigger screenshake and explosion animation.
 					GameObjectPtr explosion(new ExplosionEffect(deathLocation));
 					World::sInstance->AddGameObject(explosion);
 

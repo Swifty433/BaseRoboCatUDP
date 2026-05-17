@@ -1,4 +1,5 @@
 // Joseph Byrne D00255161
+//Eoin Hamill D00258444
 
 #include "RoboCatServerPCH.hpp"
 #include <fstream>
@@ -19,7 +20,7 @@ Server::Server() :
     mTotalPlayers(0),
     mRoundActive(false),
     mRoundEndTimer(0.f),
-    mInLobby(true),
+    mInLobby(true), //Lobby starts as true
     mLobbyStarted(false),
     mLobbyTimer(120.f)
 {
@@ -62,9 +63,10 @@ void Server::DoFrame()
 
     Engine::DoFrame();
 
-    //Adding in lobby
+    //Adding in lobby if in lobby count down.
     if (mInLobby)
     {
+        //Stop lobby from counting down until at least 1 player joins.
         if (mLobbyStarted)
         {
             mLobbyTimer -= Timing::sInstance.GetDeltaTime();
@@ -75,6 +77,7 @@ void Server::DoFrame()
                 mLobbyTimer = 0.f;
             }
 
+            //once timer reaches 0 start new round
             if (mLobbyTimer <= 0.f)
             {
                 mLobbyTimer = 0.f;
@@ -214,7 +217,7 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
     printf("Player %d (%s) joined! Total players: %d\n",
         playerId, inClientProxy->GetName().c_str(), mTotalPlayers);
     fflush(stdout);
-
+    //Chatgpt helped me code the lobby
     // First player gets the potato and starts the round
     if (mInLobby)
     {

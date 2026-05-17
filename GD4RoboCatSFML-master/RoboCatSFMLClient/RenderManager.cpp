@@ -1,9 +1,11 @@
 //edited by joseph byrne D00255161
+//eoin hamill D00258444
 #include "RoboCatClientPCH.hpp"
 
 std::unique_ptr< RenderManager >	RenderManager::sInstance;
 
 RenderManager::RenderManager() :
+	//screenshake variables
 	mShakeTimer(0.f),
 	mShakeDuration(0.f),
 	mShakeIntensity(0.f)
@@ -107,7 +109,7 @@ void RenderManager::Render()
 	WindowManager::sInstance->display();
 
 }
-
+//set screenshake variables
 void RenderManager::StartScreenShake(float inDuration, float inIntensity)
 {
 	mShakeDuration = inDuration;
@@ -115,24 +117,27 @@ void RenderManager::StartScreenShake(float inDuration, float inIntensity)
 	mShakeIntensity = inIntensity;
 }
 
+//
 void RenderManager::UpdateScreenShake()
 {
+	//reset camera
 	view.reset(sf::FloatRect(0, 0, 1920, 1080));
-	
+	//if shake timer is above 0 screenshake
 	if (mShakeTimer > 0.f)
 	{
+		//countdown
 		mShakeTimer -= Timing::sInstance.GetDeltaTime();
-
+		//work out how long is left
 		float shakePercent = mShakeTimer / mShakeDuration;
-
+		//shake gets weaker over time
 		float currentIntensity = mShakeIntensity * shakePercent;
-
+		//random horizonaltal and then vertical mvoement offset
 		float offsetX = ((rand() % 200) / 100.f - 1.f) * currentIntensity;
 		float offsetY = ((rand() % 200) / 100.f - 1.f) * currentIntensity;
-
+		//move the camera
 		view.move(offsetX, offsetY);
 	}
-
+	//apply the changes
 	WindowManager::sInstance->setView(view);
 }
 
