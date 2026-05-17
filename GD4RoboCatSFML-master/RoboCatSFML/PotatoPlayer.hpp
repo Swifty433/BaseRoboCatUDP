@@ -51,6 +51,7 @@ protected:
     void AdjustVelocityByThrust(float inDeltaTime);
 
     Vector3  mVelocity;
+    Vector3 mMoveInput;
     float    mThrustDir;
     int      mHealth;
     bool     mHasPotato;

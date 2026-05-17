@@ -9,6 +9,7 @@ const float PP_WORLD_WIDTH = 1920.f;
 PotatoPlayer::PotatoPlayer() :
     GameObject(),
     mVelocity(Vector3::Zero),
+    mMoveInput(Vector3::Zero),
     mThrustDir(0.f),
     mHealth(1),
     mHasPotato(false),
@@ -25,16 +26,36 @@ PotatoPlayer::PotatoPlayer() :
 
 void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputState)
 {
-    float newRotation = GetRotation() +
-        inInputState.GetDesiredHorizontalDelta() * mMaxRotationSpeed * inDeltaTime;
-    SetRotation(newRotation);
-    mThrustDir = inInputState.GetDesiredVerticalDelta();
+    (void)inDeltaTime;
+
+    float horizontal = inInputState.GetDesiredHorizontalDelta();
+    float vertical = inInputState.GetDesiredVerticalDelta();
+
+    
+    mMoveInput = Vector3(horizontal, -vertical, 0.f);
+
+    //fixing diagonal mvoement being faster then straight line
+    if (mMoveInput.LengthSq2D() > 1.f)
+    {
+        mMoveInput.Normalize2D();
+    }
+
+    //Updating the sprites direction
+    if (mMoveInput.LengthSq2D() > 0.f)
+    {
+        float angle = atan2f(mMoveInput.mY, mMoveInput.mX) * 180.f / 3.14159265f;
+        SetRotation(angle + 90.f);
+    }
+
+    mThrustDir = vertical;
+
 }
 
 void PotatoPlayer::AdjustVelocityByThrust(float inDeltaTime)
 {
-    Vector3 forwardVector = GetForwardVector();
-    mVelocity = forwardVector * (mThrustDir * inDeltaTime * mMaxLinearSpeed);
+    (void)inDeltaTime;
+
+    mVelocity = mMoveInput * mMaxLinearSpeed;
 }
 
 void PotatoPlayer::SimulateMovement(float inDeltaTime)
