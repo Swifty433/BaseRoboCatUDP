@@ -9,7 +9,8 @@ public:
 
 	void Render();
 
-	void SetPlayerHealth(int inHealth) { mHealth = inHealth; }
+	//void SetPlayerHealth(int inHealth) { mHealth = inHealth; }
+	void SetDashCooldown(float inRemaining, float inMax);
 
 	void ShowDeathMessage(uint32_t inPlayerId);
 
@@ -20,7 +21,7 @@ private:
 	void	RenderBandWidth();
 	void	RenderRoundTripTime();
 	void	RenderScoreBoard();
-	void	RenderHealth();
+	void	RenderDashCooldown();
 	void	RenderText(const string& inStr, const Vector3& origin, const Vector3& inColor);
 	void RenderLobby();
 	void RenderDeathMessage();
@@ -32,8 +33,9 @@ private:
 	Vector3										mRoundTripTimeOrigin;
 	Vector3										mScoreBoardOrigin;
 	Vector3										mScoreOffset;
-	Vector3										mHealthOffset;
-	int											mHealth;
+	Vector3										mDashOffset;
+	float										mDashCooldownRemaining;
+	float										mDashCooldownMax;
 };
 
 

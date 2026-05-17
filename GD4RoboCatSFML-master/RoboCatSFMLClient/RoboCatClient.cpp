@@ -15,7 +15,7 @@ void RoboCatClient::HandleDying()
 	//and if we're local, tell the hud so our health goes away!
 	if (GetPlayerId() == NetworkManagerClient::sInstance->GetPlayerId())
 	{
-		HUD::sInstance->SetPlayerHealth(0);
+		//HUD::sInstance->SetPlayerHealth(0);
 	}
 }
 
@@ -129,7 +129,7 @@ void RoboCatClient::Read(InputMemoryBitStream& inInputStream)
 		//did we get health? if so, tell the hud!
 		if ((readState & ECRS_Health) != 0)
 		{
-			HUD::sInstance->SetPlayerHealth(mHealth);
+			//HUD::sInstance->SetPlayerHealth(mHealth);
 		}
 
 		DoClientSidePredictionAfterReplicationForLocalCat(readState);

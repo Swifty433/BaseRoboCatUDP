@@ -62,6 +62,11 @@ void PotatoPlayerClient::Update()
             ProcessInput(pendingMove->GetDeltaTime(), pendingMove->GetInputState());
             SimulateMovement(pendingMove->GetDeltaTime());
         }
+
+        HUD::sInstance->SetDashCooldown(
+            GetDashCooldownRemaining(),
+            GetDashCooldown()
+        );
     }
     else
     {
@@ -139,8 +144,8 @@ void PotatoPlayerClient::Read(InputMemoryBitStream& inInputStream)
         inInputStream.Read(isAlive);
         mHealth = isAlive ? 1 : 0;
         readState |= EPRS_Health;
-        if (GetPlayerId() == (uint32_t)NetworkManagerClient::sInstance->GetPlayerId())
-            HUD::sInstance->SetPlayerHealth(mHealth);
+        //if (GetPlayerId() == (uint32_t)NetworkManagerClient::sInstance->GetPlayerId())
+            //HUD::sInstance->SetPlayerHealth(mHealth);
     }
 
     // HasPotato — always read the value when dirty bit is set

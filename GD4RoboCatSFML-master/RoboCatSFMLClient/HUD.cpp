@@ -8,8 +8,9 @@ HUD::HUD() :
 	mBandwidthOrigin(50.f, 10.f, 0.0f),
 	mRoundTripTimeOrigin(580.f, 10.f, 0.0f),
 	mScoreOffset(0.f, 50.f, 0.0f),
-	mHealthOffset(1000, 10.f, 0.0f),
-	mHealth(0),
+	mDashOffset(1000.f, 10.f,0.0f),
+	mDashCooldownRemaining(0.f),
+	mDashCooldownMax(5.f),
 	mDeathMessage(""),
 	mDeathMessageTimer(0.f)
 {
@@ -33,17 +34,32 @@ void HUD::Render()
 		return;
 	}
 	else {
-		RenderHealth();
+		RenderDashCooldown();
 		RenderDeathMessage();
 	}
 }
 
-void HUD::RenderHealth()
+void HUD::RenderDashCooldown()
 {
-	if (mHealth > 0)
+	if (mDashCooldownRemaining <= 0.f)
 	{
-		string healthString = StringUtils::Sprintf("Health %d", mHealth);
-		RenderText(healthString, mHealthOffset, Colors::Red);
+		RenderText("Dash Ready", mDashOffset, Colors::Green);
+	}
+	else
+	{
+		string dashString = StringUtils::Sprintf("Dash %.1fs", mDashCooldownRemaining);
+		RenderText(dashString, mDashOffset, Colors::Red);
+	}
+}
+
+void HUD::SetDashCooldown(float inRemaining, float inMax)
+{
+	mDashCooldownRemaining = inRemaining;
+	mDashCooldownMax = inMax;
+
+	if (mDashCooldownRemaining < 0.f)
+	{
+		mDashCooldownRemaining = 0.f;
 	}
 }
 

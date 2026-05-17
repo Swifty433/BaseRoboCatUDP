@@ -41,7 +41,11 @@ public:
 
     int  GetHealth()               const { return mHealth; }
     void SetHealth(int inHealth) { mHealth = inHealth; }
+
     bool IsAlive()                 const { return mHealth > 0; }
+
+    float GetDashCooldownRemaining() const { return mDashCooldownRemaining; }
+    float GetDashCooldown() const { return mDashCooldown; }
 
     virtual uint32_t Write(OutputMemoryBitStream& inOutputStream,
         uint32_t inDirtyState) const override;
