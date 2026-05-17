@@ -211,7 +211,9 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
     mCumulativeScores[playerId] = 0;
     mTotalPlayers++;
 
-    
+    printf("Player %d (%s) joined! Total players: %d\n",
+        playerId, inClientProxy->GetName().c_str(), mTotalPlayers);
+    fflush(stdout);
 
     // First player gets the potato and starts the round
     if (mInLobby)
@@ -248,6 +250,9 @@ void Server::HandleLostClient(ClientProxyPtr inClientProxy)
     int playerId = inClientProxy->GetPlayerId();
     ScoreBoardManager::sInstance->RemoveEntry(playerId);
     mTotalPlayers--;
+
+    printf("Player %d disconnected. Total players: %d\n", playerId, mTotalPlayers);
+    fflush(stdout);
 
     PotatoPlayerPtr player = GetPlayerForId(playerId);
     if (player)

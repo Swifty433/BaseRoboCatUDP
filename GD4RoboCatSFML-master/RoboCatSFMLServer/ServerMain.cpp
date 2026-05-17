@@ -1,4 +1,3 @@
-
 #include "RoboCatServerPCH.hpp"
 
 
@@ -7,6 +6,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	// Attach to the console window so printf shows in CMD
+	AllocConsole();
+	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 
 	if (Server::StaticInit())
 	{
