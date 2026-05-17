@@ -10,6 +10,7 @@ PotatoPlayer::PotatoPlayer() :
     GameObject(),
     mVelocity(Vector3::Zero),
     mMoveInput(Vector3::Zero),
+    mLastMoveDirection(Vector3(0.f,1.f,0.f)),
     mThrustDir(0.f),
     mDashCooldown(5.f),
     mDashCooldownRemaining(0.f),
@@ -23,7 +24,8 @@ PotatoPlayer::PotatoPlayer() :
     mMaxRotationSpeed(180.f),
     mWallRestitution(0.1f),
     mPlayerRestitution(0.1f),
-    mLastMoveTimestamp(0.f)
+    mLastMoveTimestamp(0.f),
+    mWasDashingLastFrame(false)
 {
     SetCollisionRadius(40.f);
     SetScale(5);
@@ -48,6 +50,8 @@ void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputStat
     //Updating the sprites direction
     if (mMoveInput.LengthSq2D() > 0.f)
     {
+        mLastMoveDirection = mMoveInput;
+
         float angle = atan2f(mMoveInput.mY, mMoveInput.mX) * 180.f / 3.14159265f;
         SetRotation(angle + 90.f);
     }
@@ -55,18 +59,32 @@ void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputStat
     if (mDashCooldownRemaining > 0.f)
     {
         mDashCooldownRemaining -= inDeltaTime;
+
+        if (mDashCooldownRemaining < 0.f)
+        {
+            mDashCooldownRemaining = 0.f;
+        }
     }
 
     if (mDashTimeRemaining > 0.f)
     {
         mDashTimeRemaining -= inDeltaTime;
+
+        if (mDashTimeRemaining < 0.f)
+        {
+            mDashTimeRemaining = 0.f;
+        }
     }
+
+    bool dashPressedThisFrame = inInputState.IsDashing() && !mWasDashingLastFrame;
 
     if (inInputState.IsDashing() && mDashCooldownRemaining <= 0.f)
     {
         mDashTimeRemaining = mDashDuration;
         mDashCooldownRemaining = mDashCooldown;
     }
+
+    mWasDashingLastFrame = inInputState.IsDashing();
 
 
     mThrustDir = vertical;
@@ -219,6 +237,10 @@ uint32_t PotatoPlayer::Write(OutputMemoryBitStream& inOutputStream,
         inOutputStream.Write(loc.mX);
         inOutputStream.Write(loc.mY);
         inOutputStream.Write(GetRotation());
+
+        inOutputStream.Write(mDashCooldownRemaining);
+        inOutputStream.Write(mDashTimeRemaining);
+
         writtenState |= EPRS_Pose;
     }
     else { inOutputStream.Write(false); }

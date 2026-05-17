@@ -59,6 +59,7 @@ protected:
     float mDashTimeRemaining;
     float mDashSpeedMultiplier;
     Vector3 mLastMoveDirection;
+    bool mWasDashingLastFrame;
 
     int      mHealth;
     bool     mHasPotato;

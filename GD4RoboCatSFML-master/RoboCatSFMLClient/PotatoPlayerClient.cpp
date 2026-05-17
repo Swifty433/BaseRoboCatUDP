@@ -101,6 +101,10 @@ void PotatoPlayerClient::Read(InputMemoryBitStream& inInputStream)
         inInputStream.Read(loc.mX);
         inInputStream.Read(loc.mY);
         inInputStream.Read(rot);
+
+        inInputStream.Read(mDashCooldownRemaining);
+        inInputStream.Read(mDashTimeRemaining);
+
         SetVelocity(vel);
         SetLocation(loc);
         SetRotation(rot);
