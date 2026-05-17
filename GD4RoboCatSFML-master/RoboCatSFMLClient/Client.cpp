@@ -1,5 +1,7 @@
 // Joseph Byrne D00255161
 #include "RoboCatClientPCH.hpp"
+#include <fstream>
+#include <windows.h>
 
 bool Client::StaticInit()
 {
@@ -24,12 +26,30 @@ bool Client::StaticInit()
 
 Client::Client()
 {
-    // Register PotatoPlayer only — replaces RoboCat/Mouse/Yarn
-    GameObjectRegistry::sInstance->RegisterCreationFunction(
-        'PTOP', PotatoPlayerClient::StaticCreate);
+	// Register PotatoPlayer only — replaces RoboCat/Mouse/Yarn
+	GameObjectRegistry::sInstance->RegisterCreationFunction(
+		'PTOP', PotatoPlayerClient::StaticCreate);
 
-	string destination = StringUtils::GetCommandLineArg(1);
-	string name = StringUtils::GetCommandLineArg(2);
+	//string destination = StringUtils::GetCommandLineArg(1);
+	//string name = StringUtils::GetCommandLineArg(2);
+
+	// Read IP and name from ip.txt next to the exe
+	string destination = "127.0.0.1:50000";
+	string name = "Player";
+
+	char exePath[256];
+	GetModuleFileNameA(NULL, exePath, 256);
+	string exeDir = string(exePath);
+	exeDir = exeDir.substr(0, exeDir.find_last_of("\\/"));
+	string ipFilePath = exeDir + "\\ip.txt";
+
+	std::ifstream ipFile(ipFilePath);
+	if (ipFile.is_open())
+	{
+		std::getline(ipFile, destination);
+		std::getline(ipFile, name);
+		ipFile.close();
+	}
 
 	SocketAddressPtr serverAddress = SocketAddressFactory::CreateIPv4FromString(destination);
 

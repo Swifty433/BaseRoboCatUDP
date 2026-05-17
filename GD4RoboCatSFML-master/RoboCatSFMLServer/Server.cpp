@@ -217,7 +217,8 @@ void Server::HandleNewClient(ClientProxyPtr inClientProxy)
     if (mInLobby)
     {
         mLobbyStarted = true;
-        LOG("Player 5d joined", playerId);
+        SpawnPlayerForId(playerId);
+        LOG("Player %d joined", playerId);
         return;
     }
 
