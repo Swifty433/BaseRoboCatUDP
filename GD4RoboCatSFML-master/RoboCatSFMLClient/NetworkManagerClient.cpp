@@ -145,7 +145,7 @@ void NetworkManagerClient::HandleStatePacket(InputMemoryBitStream& inInputStream
 					GameObjectPtr explosion(new ExplosionEffect(deathLocation));
 					World::sInstance->AddGameObject(explosion);
 
-					AudioManager::sInstance->PlaySound("explosionSound.mp3");
+					AudioManager::sInstance->PlaySound("Assets/explosionSound.mp3");
 
 					break;
 				}

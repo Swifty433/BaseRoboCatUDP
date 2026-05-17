@@ -22,34 +22,34 @@ TextureManager::TextureManager()
     GetCurrentDirectoryA(256, buffer);
     LOG("Working directory: %s", buffer);
 
-    CacheTexture("player", "player.png");
-    CacheTexture("player_potato", "player_potato.png");
-	CacheTexture("background", "background.png");
+    CacheTexture("player", "Assets/player.png");
+    CacheTexture("player_potato", "Assets/player_potato.png");
+	CacheTexture("background", "Assets/background.png");
 
     //normal Player
-    CacheTexture("player_up", "player_up.png");
-	CacheTexture("player_down", "player_down.png");
-	CacheTexture("player_left", "player_left.png");
-	CacheTexture("player_right", "player_right.png");
-	CacheTexture("player_upleft", "player_upleft.png");
-	CacheTexture("player_upright", "player_upright.png");
-	CacheTexture("player_downleft", "player_downleft.png");
-	CacheTexture("player_downright", "player_downright.png");
+    CacheTexture("player_up", "Assets/player_up.png");
+	CacheTexture("player_down", "Assets/player_down.png");
+	CacheTexture("player_left", "Assets/player_left.png");
+	CacheTexture("player_right", "Assets/player_right.png");
+	CacheTexture("player_upleft", "Assets/player_upleft.png");
+	CacheTexture("player_upright", "Assets/player_upright.png");
+	CacheTexture("player_downleft", "Assets/player_downleft.png");
+	CacheTexture("player_downright", "Assets/player_downright.png");
 
 	//potato Player
-	CacheTexture("player_potato_up", "player_potato_up.png");
-	CacheTexture("player_potato_down", "player_potato_down.png");
-	CacheTexture("player_potato_left", "player_potato_left.png");
-	CacheTexture("player_potato_right", "player_potato_right.png");
-	CacheTexture("player_potato_upleft", "player_potato_upleft.png");
-	CacheTexture("player_potato_upright", "player_potato_upright.png");
-	CacheTexture("player_potato_downleft", "player_potato_downleft.png");
-	CacheTexture("player_potato_downright", "player_potato_downright.png");
+	CacheTexture("player_potato_up", "Assets/player_potato_up.png");
+	CacheTexture("player_potato_down", "Assets/player_potato_down.png");
+	CacheTexture("player_potato_left", "Assets/player_potato_left.png");
+	CacheTexture("player_potato_right", "Assets/player_potato_right.png");
+	CacheTexture("player_potato_upleft", "Assets/player_potato_upleft.png");
+	CacheTexture("player_potato_upright", "Assets/player_potato_upright.png");
+	CacheTexture("player_potato_downleft", "Assets/player_potato_downleft.png");
+	CacheTexture("player_potato_downright", "Assets/player_potato_downright.png");
 
 	//Explosion
-	CacheTexture("explosion1", "explosion1.PNG");
-	CacheTexture("explosion2", "explosion2.PNG");
-	CacheTexture("explosion3", "explosion3.PNG");
+	CacheTexture("explosion1", "Assets/explosion1.PNG");
+	CacheTexture("explosion2", "Assets/explosion2.PNG");
+	CacheTexture("explosion3", "Assets/explosion3.PNG");
 }
 
 TexturePtr TextureManager::GetTexture(const string& inTextureName)

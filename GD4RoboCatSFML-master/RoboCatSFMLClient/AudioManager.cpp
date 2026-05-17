@@ -12,7 +12,7 @@ void AudioManager::StaticInt()
 
 AudioManager::AudioManager()
 {
-	PlayMusic("music.ogg", true);
+	PlayMusic("Assets/music.ogg", true);
 	SetMusicVolume(50.f);
 }
 
