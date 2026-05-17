@@ -14,6 +14,7 @@ public:
 	void AddComponent(SpriteComponent* inComponent);
 	void RemoveComponent(SpriteComponent* inComponent);
 	int	 GetComponentIndex(SpriteComponent* inComponent) const;
+	void StartScreenShake(float inDuration, float inIntensity);
 
 private:
 
@@ -26,6 +27,12 @@ private:
 
 	sf::Texture mBackgroundTexture;
 	sf::Sprite mBackgroundSprite;
+
+	float mShakeTimer;
+	float mShakeDuration;
+	float mShakeIntensity;
+
+	void UpdateScreenShake();
 };
 
 

@@ -146,6 +146,7 @@ void NetworkManagerClient::HandleStatePacket(InputMemoryBitStream& inInputStream
 					World::sInstance->AddGameObject(explosion);
 
 					AudioManager::sInstance->PlaySound("Assets/explosionSound.mp3");
+					RenderManager::sInstance->StartScreenShake(0.4f, 20.f);
 
 					break;
 				}

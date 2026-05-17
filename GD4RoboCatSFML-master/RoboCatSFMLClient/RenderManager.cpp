@@ -3,10 +3,16 @@
 
 std::unique_ptr< RenderManager >	RenderManager::sInstance;
 
-RenderManager::RenderManager()
+RenderManager::RenderManager() :
+	mShakeTimer(0.f),
+	mShakeDuration(0.f),
+	mShakeIntensity(0.f)
 {
 	view.reset(sf::FloatRect(0, 0, 1920, 1080));
 	WindowManager::sInstance->setView(view);
+
+	
+
 
 	if(mBackgroundTexture.loadFromFile("Assets/background.png"))
 	{
@@ -82,15 +88,48 @@ void RenderManager::Render()
 	//
 	WindowManager::sInstance->clear(sf::Color(sf::Color::White));
 
+	UpdateScreenShake();
+
 	WindowManager::sInstance->draw(mBackgroundSprite);
 
 	RenderManager::sInstance->RenderComponents();
 
 	HUD::sInstance->Render();
 
+	view.reset(sf::FloatRect(0, 0, 1920, 1080));
+	WindowManager::sInstance->setView(view);
+
 	//
 	// Present our back buffer to our front buffer
 	//
 	WindowManager::sInstance->display();
 
+}
+
+void RenderManager::StartScreenShake(float inDuration, float inIntensity)
+{
+	mShakeDuration = inDuration;
+	mShakeTimer = inDuration;
+	mShakeIntensity = inIntensity;
+}
+
+void RenderManager::UpdateScreenShake()
+{
+	view.reset(sf::FloatRect(0, 0, 1920, 1080));
+	
+	if (mShakeTimer > 0.f)
+	{
+		mShakeTimer -= Timing::sInstance.GetDeltaTime();
+
+		float shakePercent = mShakeTimer / mShakeDuration;
+
+		float currentIntensity = mShakeIntensity * shakePercent;
+
+		float offsetX = ((rand() % 200) / 100.f - 1.f) * currentIntensity;
+		float offsetY = ((rand() % 200) / 100.f - 1.f) * currentIntensity;
+
+		view.move(offsetX, offsetY);
+	}
+
+	WindowManager::sInstance->setView(view);
 }
