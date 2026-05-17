@@ -94,6 +94,8 @@ void RenderManager::Render()
 
 	RenderManager::sInstance->RenderComponents();
 
+	RenderPlayerNames();
+
 	HUD::sInstance->Render();
 
 	view.reset(sf::FloatRect(0, 0, 1920, 1080));
@@ -132,4 +134,49 @@ void RenderManager::UpdateScreenShake()
 	}
 
 	WindowManager::sInstance->setView(view);
+}
+
+void RenderManager::RenderPlayerNames()
+{
+	for (const GameObjectPtr& gameObject : World::sInstance->GetGameObjects())
+	{
+		PotatoPlayer* player = gameObject->GetAsPotatoPlayer();
+
+		if (player == nullptr || !player->IsAlive())
+		{
+			continue;
+		}
+
+		ScoreBoardManager::Entry* entry =
+			ScoreBoardManager::sInstance->GetEntry(player->GetPlayerId());
+
+		if (entry == nullptr)
+		{
+			continue;
+		}
+
+		sf::Text nameText;
+		nameText.setFont(*FontManager::sInstance->GetFont("carlito"));
+		nameText.setString(entry->GetPlayerName());
+		nameText.setCharacterSize(24);
+		nameText.setFillColor(sf::Color::White);
+		nameText.setOutlineColor(sf::Color::Black);
+		nameText.setOutlineThickness(2.f);
+
+		sf::FloatRect bounds = nameText.getLocalBounds();
+
+		nameText.setOrigin(
+			bounds.left + bounds.width / 2.f,
+			bounds.top + bounds.height / 2.f
+		);
+
+		Vector3 playerLocation = player->GetLocation();
+
+		nameText.setPosition(
+			playerLocation.mX,
+			playerLocation.mY + 85.f
+		);
+
+		WindowManager::sInstance->draw(nameText);
+	}
 }

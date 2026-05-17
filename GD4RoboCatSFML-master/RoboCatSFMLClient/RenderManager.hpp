@@ -33,6 +33,7 @@ private:
 	float mShakeIntensity;
 
 	void UpdateScreenShake();
+	void RenderPlayerNames();
 };
 
 

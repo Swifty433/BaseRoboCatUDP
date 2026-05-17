@@ -139,6 +139,12 @@ void PotatoPlayer::ProcessCollisions()
         goIt != World::sInstance->GetGameObjects().end(); ++goIt)
     {
         GameObject* target = goIt->get();
+        //Code to let players pass through each other.
+        /*PotatoPlayer* targetPlayer = target-> GetAsPotatoPlayer();
+        if (targetPlayer != nullptr)
+        {
+            continue;
+        }*/
         if (target != this && !target->DoesWantToDie())
         {
             Vector3 targetLocation = target->GetLocation();
