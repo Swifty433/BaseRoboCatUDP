@@ -11,10 +11,15 @@ PotatoPlayer::PotatoPlayer() :
     mVelocity(Vector3::Zero),
     mMoveInput(Vector3::Zero),
     mThrustDir(0.f),
+    mDashCooldown(5.f),
+    mDashCooldownRemaining(0.f),
+    mDashDuration(0.2f),
+    mDashTimeRemaining(0.f),
+    mDashSpeedMultiplier(3.f),
     mHealth(1),
     mHasPotato(false),
     mPlayerId(0),
-    mMaxLinearSpeed(3000.f),
+    mMaxLinearSpeed(400.f),
     mMaxRotationSpeed(180.f),
     mWallRestitution(0.1f),
     mPlayerRestitution(0.1f),
@@ -26,7 +31,7 @@ PotatoPlayer::PotatoPlayer() :
 
 void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputState)
 {
-    (void)inDeltaTime;
+    
 
     float horizontal = inInputState.GetDesiredHorizontalDelta();
     float vertical = inInputState.GetDesiredVerticalDelta();
@@ -47,6 +52,23 @@ void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputStat
         SetRotation(angle + 90.f);
     }
 
+    if (mDashCooldownRemaining > 0.f)
+    {
+        mDashCooldownRemaining -= inDeltaTime;
+    }
+
+    if (mDashTimeRemaining > 0.f)
+    {
+        mDashTimeRemaining -= inDeltaTime;
+    }
+
+    if (inInputState.IsDashing() && mDashCooldownRemaining <= 0.f)
+    {
+        mDashTimeRemaining = mDashDuration;
+        mDashCooldownRemaining = mDashCooldown;
+    }
+
+
     mThrustDir = vertical;
 
 }
@@ -55,7 +77,25 @@ void PotatoPlayer::AdjustVelocityByThrust(float inDeltaTime)
 {
     (void)inDeltaTime;
 
-    mVelocity = mMoveInput * mMaxLinearSpeed;
+    float currentSpeed = mMaxLinearSpeed;
+
+    if (mDashTimeRemaining > 0.f)
+    {
+        currentSpeed *= mDashSpeedMultiplier;
+
+        if (mMoveInput.LengthSq2D() > 0.f)
+        {
+            mVelocity = mMoveInput * currentSpeed;
+        }
+        else
+        {
+            mVelocity = mLastMoveDirection * currentSpeed;
+        }
+    }
+    else
+    {
+        mVelocity = mMoveInput * currentSpeed;
+    }
 }
 
 void PotatoPlayer::SimulateMovement(float inDeltaTime)

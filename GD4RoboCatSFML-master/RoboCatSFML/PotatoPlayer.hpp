@@ -53,6 +53,13 @@ protected:
     Vector3  mVelocity;
     Vector3 mMoveInput;
     float    mThrustDir;
+    float mDashCooldown;
+    float mDashCooldownRemaining;
+    float mDashDuration;
+    float mDashTimeRemaining;
+    float mDashSpeedMultiplier;
+    Vector3 mLastMoveDirection;
+
     int      mHealth;
     bool     mHasPotato;
     uint32_t mPlayerId;

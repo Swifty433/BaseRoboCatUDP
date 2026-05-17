@@ -34,6 +34,7 @@ bool InputState::Write(OutputMemoryBitStream& inOutputStream) const
 	WriteSignedBinaryValue(inOutputStream, GetDesiredHorizontalDelta());
 	WriteSignedBinaryValue(inOutputStream, GetDesiredVerticalDelta());
 	inOutputStream.Write(mIsShooting);
+	inOutputStream.Write(mIsDashing);
 
 	return false;
 }
@@ -44,6 +45,7 @@ bool InputState::Read(InputMemoryBitStream& inInputStream)
 	ReadSignedBinaryValue(inInputStream, mDesiredRightAmount);
 	ReadSignedBinaryValue(inInputStream, mDesiredForwardAmount);
 	inInputStream.Read(mIsShooting);
+	inInputStream.Read(mIsDashing);
 
 	return true;
 }
