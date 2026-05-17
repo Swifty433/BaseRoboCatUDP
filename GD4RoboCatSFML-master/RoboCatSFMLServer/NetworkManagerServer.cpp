@@ -142,7 +142,7 @@ void NetworkManagerServer::SendOutgoingPackets()
 		//process any timed out packets while we're going through the list
 		clientProxy->GetDeliveryNotificationManager().ProcessTimedOutPackets();
 
-		if (clientProxy->IsLastMoveTimestampDirty())
+		if (shouldSendStatePacket || clientProxy->IsLastMoveTimestampDirty())
 		{
 			SendStatePacketToClient(clientProxy);
 		}

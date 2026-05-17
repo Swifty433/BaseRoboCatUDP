@@ -1,4 +1,5 @@
 #include "RoboCatClientPCH.hpp"
+// Eoin Hamill D00258444
 
 unique_ptr< InputManager >	InputManager::sInstance;
 
@@ -44,6 +45,7 @@ void InputManager::HandleInput(EInputAction inInputAction, int inKeyCode)
 {
 	switch (inKeyCode)
 	{
+		//On a click move left. when a is stopped being clicked stop storing left movement. Repeated for all directions
 	case sf::Keyboard::A:
 		UpdateDesireFloatFromKey(inInputAction, mCurrentState.mDesiredLeftAmount);
 		break;
@@ -59,6 +61,7 @@ void InputManager::HandleInput(EInputAction inInputAction, int inKeyCode)
 	case sf::Keyboard::K:
 		UpdateDesireVariableFromKey(inInputAction, mCurrentState.mIsShooting);
 		break;
+		//dash input
 	case sf::Keyboard::Space:
 		UpdateDesireVariableFromKey(inInputAction, mCurrentState.mIsDashing);
 		break;

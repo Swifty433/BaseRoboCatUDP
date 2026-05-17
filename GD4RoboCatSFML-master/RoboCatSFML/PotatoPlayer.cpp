@@ -33,12 +33,12 @@ PotatoPlayer::PotatoPlayer() :
 
 void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputState)
 {
-    
+    //read movement values from Input state
 
     float horizontal = inInputState.GetDesiredHorizontalDelta();
     float vertical = inInputState.GetDesiredVerticalDelta();
 
-    
+    //store movement as a vector
     mMoveInput = Vector3(horizontal, -vertical, 0.f);
 
     //fixing diagonal mvoement being faster then straight line
@@ -47,7 +47,8 @@ void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputStat
         mMoveInput.Normalize2D();
     }
 
-    //Updating the sprites direction
+    //Updating the sprites direction and saving last moved direction 
+    //
     if (mMoveInput.LengthSq2D() > 0.f)
     {
         mLastMoveDirection = mMoveInput;
@@ -56,6 +57,7 @@ void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputStat
         SetRotation(angle + 90.f);
     }
 
+    //countdown dash cooldown timer
     if (mDashCooldownRemaining > 0.f)
     {
         mDashCooldownRemaining -= inDeltaTime;
@@ -65,7 +67,7 @@ void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputStat
             mDashCooldownRemaining = 0.f;
         }
     }
-
+    //countdown dash duration for how long it last
     if (mDashTimeRemaining > 0.f)
     {
         mDashTimeRemaining -= inDeltaTime;
@@ -76,6 +78,7 @@ void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputStat
         }
     }
 
+    //check if dash button is being pressed
     bool dashPressedThisFrame = inInputState.IsDashing() && !mWasDashingLastFrame;
 
     if (inInputState.IsDashing() && mDashCooldownRemaining <= 0.f)
@@ -91,25 +94,29 @@ void PotatoPlayer::ProcessInput(float inDeltaTime, const InputState& inInputStat
 
 }
 
+
 void PotatoPlayer::AdjustVelocityByThrust(float inDeltaTime)
 {
     (void)inDeltaTime;
-
+    //set speed
     float currentSpeed = mMaxLinearSpeed;
-
+    //if dash is active increase speed
     if (mDashTimeRemaining > 0.f)
     {
+        //increase speed
         currentSpeed *= mDashSpeedMultiplier;
-
+        //dash in direction of movement
         if (mMoveInput.LengthSq2D() > 0.f)
         {
             mVelocity = mMoveInput * currentSpeed;
         }
         else
         {
+            //If the player is not pressing a movement key use the last movement
             mVelocity = mLastMoveDirection * currentSpeed;
         }
     }
+    //if not dashing use normal speed
     else
     {
         mVelocity = mMoveInput * currentSpeed;
@@ -118,8 +125,11 @@ void PotatoPlayer::AdjustVelocityByThrust(float inDeltaTime)
 
 void PotatoPlayer::SimulateMovement(float inDeltaTime)
 {
+    //work out player velocity
     AdjustVelocityByThrust(inDeltaTime);
+    //move the player based on velocity and delta time
     SetLocation(GetLocation() + mVelocity * inDeltaTime);
+    //check if player collided with anything
     ProcessCollisions();
 }
 

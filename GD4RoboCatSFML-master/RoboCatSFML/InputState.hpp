@@ -1,3 +1,4 @@
+//Eoin Hamill D00258444
 class InputState
 {
 public:
@@ -10,11 +11,16 @@ public:
 		mIsShooting(false),
 		mIsDashing(false)
 	{}
-
-	float GetDesiredHorizontalDelta()	const { return mDesiredRightAmount - mDesiredLeftAmount; }
-	float GetDesiredVerticalDelta()		const { return mDesiredForwardAmount - mDesiredBackAmount; }
-	bool  IsShooting()					const { return mIsShooting; }
-	bool IsDashing()					const { return mIsDashing;  }
+	//working on how much to be moved in certain direction. 
+	//if player pressed left and right it will equal 0
+	float GetDesiredHorizontalDelta()	const 
+	{ return mDesiredRightAmount - mDesiredLeftAmount; }
+	float GetDesiredVerticalDelta()		const 
+	{ return mDesiredForwardAmount - mDesiredBackAmount; }
+	bool  IsShooting()					const 
+	{ return mIsShooting; }
+	bool IsDashing()					const 
+	{ return mIsDashing;  }
 
 	bool Write(OutputMemoryBitStream& inOutputStream) const;
 	bool Read(InputMemoryBitStream& inInputStream);

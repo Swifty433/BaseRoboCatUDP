@@ -54,26 +54,36 @@ void PotatoPlayerClient::Update()
     //    mPotatoSprite->SetVisibility(mHasPotato);
     //}
 
+    //check if it's my player
     if (GetPlayerId() == (uint32_t)NetworkManagerClient::sInstance->GetPlayerId())
     {
+        //get movement from the input manager
         const Move* pendingMove = InputManager::sInstance->GetAndClearPendingMove();
         if (pendingMove)
         {
+            //apply the input locally first before waiting for server
             ProcessInput(pendingMove->GetDeltaTime(), pendingMove->GetInputState());
             SimulateMovement(pendingMove->GetDeltaTime());
         }
 
+        //Update HUD for dash cooldown
         HUD::sInstance->SetDashCooldown(
             GetDashCooldownRemaining(),
             GetDashCooldown()
         );
     }
-    else
+    //if its another player take movement from server and update.
+    /*else
     {
-        SimulateMovement(Timing::sInstance.GetDeltaTime());
+        float deltaTime = Timing::sInstance.GetDeltaTime();
+
+        SetLocation(GetLocation() + GetVelocity() * deltaTime);
+
         if (RoboMath::Is2DVectorEqual(GetVelocity(), Vector3::Zero))
+        {
             mTimeLocationBecameOutOfSync = 0.f;
-    }
+        }
+    }*/
 }
 
 void PotatoPlayerClient::Read(InputMemoryBitStream& inInputStream)
@@ -201,10 +211,16 @@ void PotatoPlayerClient::DoClientSidePredictionForRemote(uint32_t inReadState)
     {
         float rtt = NetworkManagerClient::sInstance->GetRoundTripTime();
         float deltaTime = 1.f / 30.f;
+
         while (true)
         {
-            if (rtt < deltaTime) { SimulateMovement(rtt); break; }
-            SimulateMovement(deltaTime);
+            if (rtt < deltaTime)
+            {
+                SetLocation(GetLocation() + GetVelocity() * rtt);
+                break;
+            }
+
+            SetLocation(GetLocation() + GetVelocity() * deltaTime);
             rtt -= deltaTime;
         }
     }

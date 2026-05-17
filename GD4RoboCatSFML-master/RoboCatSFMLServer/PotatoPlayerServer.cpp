@@ -1,5 +1,5 @@
 // Joseph Byrne D00255161
-
+//Eoin Hamill D00258444
 #include "RoboCatServerPCH.hpp"
 
 PotatoPlayerServer::PotatoPlayerServer() :
@@ -13,19 +13,22 @@ void PotatoPlayerServer::HandleDying()
 
 void PotatoPlayerServer::Update()
 {
-    
+    //Store players old state
     Vector3 oldLocation = GetLocation();
     Vector3 oldVelocity = GetVelocity();
     float   oldRotation = GetRotation();
     bool    oldHasPotato = HasPotato();
 
+    //find client that owns this player
     ClientProxyPtr client =
         NetworkManagerServer::sInstance->GetClientProxy(GetPlayerId());
     if (client)
     {
+        //get movement this client has sent to server
         MoveList& moveList = client->GetUnprocessedMoveList();
         for (const Move& move : moveList)
         {
+            //process
             ProcessInput(move.GetDeltaTime(), move.GetInputState());
             SimulateMovement(move.GetDeltaTime());
         }
@@ -85,8 +88,11 @@ void PotatoPlayerServer::Update()
         !RoboMath::Is2DVectorEqual(oldVelocity, GetVelocity()) ||
         oldRotation != GetRotation())
     {
-        NetworkManagerServer::sInstance->SetStateDirty(
+            LOG("SERVER: PLAYER %d moved",
             GetNetworkId(), PotatoPlayer::EPRS_Pose);
+
+            NetworkManagerServer::sInstance->SetStateDirty(
+                GetNetworkId(), PotatoPlayer::EPRS_Pose);
     }
 
     if (oldHasPotato != HasPotato())

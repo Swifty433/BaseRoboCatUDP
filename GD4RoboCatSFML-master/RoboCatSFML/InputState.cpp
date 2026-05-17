@@ -1,5 +1,5 @@
 #include "RoboCatPCH.hpp"
-
+//Eoin Hamill D00258444
 namespace
 {
 	void WriteSignedBinaryValue(OutputMemoryBitStream& inOutputStream, float inValue)
@@ -31,9 +31,12 @@ namespace
 
 bool InputState::Write(OutputMemoryBitStream& inOutputStream) const
 {
+	//writes you horizontal movement into the packet
 	WriteSignedBinaryValue(inOutputStream, GetDesiredHorizontalDelta());
+	//write vertical movement to a packet
 	WriteSignedBinaryValue(inOutputStream, GetDesiredVerticalDelta());
 	inOutputStream.Write(mIsShooting);
+	//write dash to server
 	inOutputStream.Write(mIsDashing);
 
 	return false;
@@ -41,7 +44,7 @@ bool InputState::Write(OutputMemoryBitStream& inOutputStream) const
 
 bool InputState::Read(InputMemoryBitStream& inInputStream)
 {
-
+	//Read the movements sent over the network
 	ReadSignedBinaryValue(inInputStream, mDesiredRightAmount);
 	ReadSignedBinaryValue(inInputStream, mDesiredForwardAmount);
 	inInputStream.Read(mIsShooting);
