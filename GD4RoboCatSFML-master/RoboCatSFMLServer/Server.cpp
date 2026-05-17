@@ -21,7 +21,7 @@ Server::Server() :
     mRoundEndTimer(0.f),
     mInLobby(true),
     mLobbyStarted(false),
-    mLobbyTimer(15.f)
+    mLobbyTimer(120.f)
 {
     GameObjectRegistry::sInstance->RegisterCreationFunction(
         'PTOP', PotatoPlayerServer::StaticCreate);
@@ -69,8 +69,8 @@ void Server::DoFrame()
         {
             mLobbyTimer -= Timing::sInstance.GetDeltaTime();
 
-            // Press SPACE on the server console to skip lobby timer
-            if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+            // Press P on the server console to skip lobby timer
+            if (GetAsyncKeyState('P') & 0x8000)
             {
                 mLobbyTimer = 0.f;
             }
